@@ -1,0 +1,16 @@
+{
+  "eval_id": 2,
+  "eval_name": "low-poly-terrain-generator",
+  "prompt": "I want a low-poly terrain generator website. On the left, show a Three.js scene with a procedurally generated terrain mesh. On the right, add controls for terrain roughness, height scale, and a color scheme selector (desert, arctic, forest). Include a regenerate button.",
+  "assertions": [
+    {"id": "has_three_js", "description": "HTML file includes Three.js CDN script tag"},
+    {"id": "has_plane_geometry", "description": "Scene uses PlaneGeometry or similar for terrain mesh"},
+    {"id": "has_displacement", "description": "Vertices are displaced to create terrain height variation"},
+    {"id": "has_split_layout", "description": "Page has a two-panel layout with 3D canvas on the left"},
+    {"id": "has_roughness_control", "description": "Right panel has a roughness control"},
+    {"id": "has_height_control", "description": "Right panel has a height scale control"},
+    {"id": "has_color_scheme", "description": "Right panel has a color scheme selector with at least desert/arctic/forest options"},
+    {"id": "has_regenerate_button", "description": "Right panel has a Regenerate button"},
+    {"id": "file_in_assets", "description": "Output HTML file is saved inside the assets/ directory"}
+  ]
+}

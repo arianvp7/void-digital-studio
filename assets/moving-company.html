@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BoltMove — Everything Moved. Nothing Broken.</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #0d0d0d;
+    color: #fff;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(13,13,13,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .logo { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+  .logo span { color: #f97316; }
+  nav ul { list-style: none; display: flex; gap: 32px; }
+  nav a { color: #aaa; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+  nav a:hover { color: #fff; }
+  .nav-cta {
+    background: #f97316; color: #fff; border: none;
+    padding: 10px 22px; border-radius: 8px; font-size: 14px;
+    font-weight: 700; cursor: pointer; transition: background 0.2s;
+  }
+  .nav-cta:hover { background: #ea6c0a; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Background glow */
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(249,115,22,0.18) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: 2.5px;
+    text-transform: uppercase; color: #f97316;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -2px;
+    margin-bottom: 24px;
+    max-width: 900px;
+  }
+  .hero h1 em { color: #f97316; font-style: normal; }
+
+  .hero p {
+    font-size: clamp(16px, 2vw, 20px);
+    color: #888;
+    max-width: 520px;
+    line-height: 1.65;
+    margin-bottom: 40px;
+  }
+
+  .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 72px; }
+  .btn-primary {
+    background: #f97316; color: #fff; border: none;
+    padding: 16px 36px; border-radius: 10px; font-size: 16px;
+    font-weight: 700; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-primary:hover { background: #ea6c0a; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(249,115,22,0.35); }
+  .btn-ghost {
+    background: transparent; color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 16px 36px; border-radius: 10px; font-size: 16px;
+    font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.5); }
+
+  /* ── VAN EXPLOSION SCENE ── */
+  .van-scene {
+    width: 100%;
+    max-width: 900px;
+    height: 380px;
+    position: relative;
+    margin: 0 auto;
+  }
+
+  /* Van body */
+  .van {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 340px;
+    height: 160px;
+  }
+
+  /* Furniture items that fly out */
+  .item {
+    position: absolute;
+    font-size: 42px;
+    animation: explode var(--dur, 2.5s) var(--delay, 0s) ease-out infinite;
+    transform-origin: center;
+    filter: drop-shadow(0 4px 12px rgba(249,115,22,0.5));
+  }
+
+  @keyframes explode {
+    0%   { transform: translate(0,0) rotate(0deg) scale(0.3); opacity: 0; }
+    15%  { opacity: 1; }
+    100% { transform: translate(var(--tx,80px), var(--ty,-180px)) rotate(var(--rot,180deg)) scale(1); opacity: 0; }
+  }
+
+  /* Shockwave ring */
+  .shockwave {
+    position: absolute;
+    bottom: 95px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    border: 3px solid #f97316;
+    border-radius: 50%;
+    animation: shockwave 1.8s ease-out infinite;
+  }
+  .shockwave:nth-child(2) { animation-delay: 0.6s; }
+  .shockwave:nth-child(3) { animation-delay: 1.2s; }
+  @keyframes shockwave {
+    0%   { width: 60px; height: 60px; opacity: 0.8; }
+    100% { width: 500px; height: 500px; opacity: 0; margin-left: -220px; margin-bottom: -220px; }
+  }
+
+  /* ── STATS BAR ── */
+  .stats {
+    background: rgba(255,255,255,0.04);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    padding: 48px 24px;
+  }
+  .stat {
+    text-align: center;
+    padding: 0 56px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+  .stat:last-child { border-right: none; }
+  .stat-num { font-size: 42px; font-weight: 900; color: #f97316; letter-spacing: -1px; }
+  .stat-label { font-size: 13px; color: #666; margin-top: 4px; font-weight: 500; }
+
+  /* ── SERVICES ── */
+  .services {
+    padding: 100px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .section-label {
+    text-align: center; font-size: 11px; font-weight: 700;
+    letter-spacing: 2.5px; text-transform: uppercase; color: #f97316;
+    margin-bottom: 14px;
+  }
+  .section-title {
+    text-align: center; font-size: clamp(28px, 4vw, 44px);
+    font-weight: 900; letter-spacing: -1px; margin-bottom: 64px;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 32px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover { border-color: rgba(249,115,22,0.4); transform: translateY(-3px); }
+  .card-icon { font-size: 36px; margin-bottom: 16px; }
+  .card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+  .card p { font-size: 14px; color: #666; line-height: 1.65; }
+
+  /* ── CTA SECTION ── */
+  .cta-section {
+    text-align: center;
+    padding: 100px 24px;
+    background: linear-gradient(180deg, transparent, rgba(249,115,22,0.06), transparent);
+  }
+  .cta-section h2 {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 900; letter-spacing: -1.5px; margin-bottom: 16px;
+  }
+  .cta-section p { font-size: 18px; color: #666; margin-bottom: 40px; }
+  .quote-form {
+    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+    max-width: 520px; margin: 0 auto;
+  }
+  .quote-form input {
+    flex: 1; min-width: 200px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #fff; padding: 14px 18px; border-radius: 10px;
+    font-size: 15px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .quote-form input:focus { border-color: #f97316; }
+  .quote-form input::placeholder { color: #555; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 32px 24px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 13px; color: #444;
+  }
+
+  @media (max-width: 600px) {
+    nav ul { display: none; }
+    nav { padding: 16px 24px; }
+    .stat { padding: 16px 24px; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Bolt<span>Move</span></div>
+  <ul>
+    <li><a href="#">Services</a></li>
+    <li><a href="#">How It Works</a></li>
+    <li><a href="#">Reviews</a></li>
+    <li><a href="#">Pricing</a></li>
+  </ul>
+  <button class="nav-cta">Get a Quote</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Austin's #1 Moving Crew</div>
+  <h1>Everything Moved.<br><em>Nothing Broken.</em></h1>
+  <p>We pack it, we load it, we deliver it — so you don't have to wrestle a sofa at 7am. Your whole home, handled.</p>
+  <div class="hero-btns">
+    <button class="btn-primary">Get My Free Quote</button>
+    <button class="btn-ghost">See How It Works</button>
+  </div>
+
+  <!-- VAN EXPLOSION SCENE -->
+  <div class="van-scene">
+
+    <!-- Shockwave rings -->
+    <div class="shockwave"></div>
+    <div class="shockwave"></div>
+    <div class="shockwave"></div>
+
+    <!-- Flying furniture items -->
+    <div class="item" style="left:50%;top:50%;--tx:-260px;--ty:-200px;--rot:-135deg;--dur:2.2s;--delay:0.0s">🛋️</div>
+    <div class="item" style="left:50%;top:50%;--tx:240px;--ty:-180px;--rot:120deg;--dur:2.0s;--delay:0.15s">📦</div>
+    <div class="item" style="left:50%;top:50%;--tx:-180px;--ty:-280px;--rot:200deg;--dur:2.4s;--delay:0.3s">🪑</div>
+    <div class="item" style="left:50%;top:50%;--tx:300px;--ty:-140px;--rot:-90deg;--dur:2.1s;--delay:0.1s">🛏️</div>
+    <div class="item" style="left:50%;top:50%;--tx:-80px;--ty:-300px;--rot:160deg;--dur:1.9s;--delay:0.45s">🖥️</div>
+    <div class="item" style="left:50%;top:50%;--tx:160px;--ty:-260px;--rot:-200deg;--dur:2.3s;--delay:0.2s">🪴</div>
+    <div class="item" style="left:50%;top:50%;--tx:-320px;--ty:-100px;--rot:80deg;--dur:2.5s;--delay:0.05s">📺</div>
+    <div class="item" style="left:50%;top:50%;--tx:80px;--ty:-310px;--rot:-60deg;--dur:2.0s;--delay:0.35s">🚿</div>
+    <div class="item" style="left:50%;top:50%;--tx:-140px;--ty:-150px;--rot:240deg;--dur:1.8s;--delay:0.5s">📚</div>
+    <div class="item" style="left:50%;top:50%;--tx:210px;--ty:-90px;--rot:-170deg;--dur:2.2s;--delay:0.25s">🪞</div>
+    <div class="item" style="left:50%;top:50%;--tx:-60px;--ty:-240px;--rot:100deg;--dur:2.6s;--delay:0.4s">🧺</div>
+    <div class="item" style="left:50%;top:50%;--tx:350px;--ty:-200px;--rot:-40deg;--dur:2.1s;--delay:0.6s">🪣</div>
+
+    <!-- Van SVG -->
+    <div class="van">
+      <svg viewBox="0 0 340 160" fill="none" xmlns="http://www.w3.org/2000/svg" width="340" height="160">
+        <!-- Van body -->
+        <rect x="0" y="40" width="260" height="100" rx="8" fill="#1e1e1e" stroke="#333" stroke-width="1.5"/>
+        <!-- Cargo area (back, open) -->
+        <rect x="0" y="40" width="180" height="100" rx="6" fill="#252525" stroke="#f97316" stroke-width="2"/>
+        <!-- Open back door lines -->
+        <line x1="180" y1="40" x2="180" y2="140" stroke="#f97316" stroke-width="2.5" stroke-dasharray="4 3"/>
+        <!-- Cab -->
+        <rect x="200" y="55" width="60" height="85" rx="6" fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
+        <!-- Windshield -->
+        <rect x="208" y="62" width="44" height="38" rx="3" fill="#0d2a3a" stroke="#2a5a7a" stroke-width="1"/>
+        <!-- Wheels -->
+        <circle cx="60" cy="148" r="22" fill="#111" stroke="#444" stroke-width="3"/>
+        <circle cx="60" cy="148" r="10" fill="#222" stroke="#555" stroke-width="2"/>
+        <circle cx="240" cy="148" r="22" fill="#111" stroke="#444" stroke-width="3"/>
+        <circle cx="240" cy="148" r="10" fill="#222" stroke="#555" stroke-width="2"/>
+        <!-- Headlight -->
+        <rect x="256" y="105" width="12" height="8" rx="2" fill="#ffd700" opacity="0.9"/>
+        <!-- Logo on side -->
+        <text x="70" y="100" font-family="system-ui" font-weight="900" font-size="18" fill="#f97316">BOLTMOVE</text>
+        <text x="70" y="118" font-family="system-ui" font-size="10" fill="#555">⚡ Fast. Safe. Stress-free.</text>
+        <!-- Explosion burst from back -->
+        <polygon points="180,90 170,70 190,80 178,55 198,72 185,50 205,68 195,45 215,65 200,42 222,62 210,40 230,62 218,40 238,64 224,45 242,68 228,50 245,74 230,58 246,82 230,68 244,90 228,78 240,96 224,86 234,104 218,94 226,114 210,102 216,122 200,108 204,128 188,112 190,130 174,116 174,134 160,118 158,134 145,118 143,132 132,114 128,128 118,110 112,122 104,104 100,114 94,96 90,104 86,88 84,96 82,80 82,88 82,72" fill="#f97316" opacity="0.25"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">4,800+</div>
+    <div class="stat-label">Happy moves completed</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">0</div>
+    <div class="stat-label">Items lost or broken</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">4.9★</div>
+    <div class="stat-label">Average Google rating</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">2hr</div>
+    <div class="stat-label">Average response time</div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="services">
+  <div class="section-label">What We Do</div>
+  <h2 class="section-title">Every kind of move, handled.</h2>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🏠</div>
+      <h3>Residential Moves</h3>
+      <p>Studio apartments to 5-bedroom homes. We pack, wrap, load, and unload — you just tell us where things go.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🏢</div>
+      <h3>Office Relocations</h3>
+      <p>After-hours and weekend moves so your team doesn't miss a day. Desks, servers, filing cabinets — sorted.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📦</div>
+      <h3>Packing Services</h3>
+      <p>We bring the boxes, bubble wrap, and muscle. Your breakables are wrapped like they're worth a million dollars.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🚚</div>
+      <h3>Long-Distance</h3>
+      <p>Moving out of Austin? We handle cross-state moves with GPS tracking so you always know where your stuff is.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🪑</div>
+      <h3>Single Item Delivery</h3>
+      <p>Bought a couch on Facebook Marketplace? We'll grab it and bring it home — no truck rental required.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🗃️</div>
+      <h3>Storage Solutions</h3>
+      <p>Not ready for everything to arrive at once? We hold your items in our secure climate-controlled facility.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-section">
+  <h2>Ready to stop dreading<br>moving day?</h2>
+  <p>Get a free quote in 2 minutes. No commitment, no surprise fees.</p>
+  <div class="quote-form">
+    <input type="text" placeholder="Enter your zip code">
+    <button class="btn-primary">Get My Free Quote</button>
+  </div>
+</section>
+
+<footer>
+  © 2026 BoltMove Austin · Licensed & Insured · (512) 555-0182
+</footer>
+
+</body>
+</html>

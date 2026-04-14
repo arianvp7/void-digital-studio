@@ -1,0 +1,23 @@
+{
+  "skill_name": "3d-asset-generator-website",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Build a website with a 3D asset generator on the left. I want to be able to generate different geometric shapes like cubes, spheres, and toruses, and have controls on the right to change the color and size.",
+      "expected_output": "A single HTML file in assets/ with a Three.js 3D panel on the left showing a 3D shape, and a right panel with controls for shape type, color, and size. OrbitControls should be enabled.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "Create a 3D particle system generator website. Left side should show an animated particle cloud in Three.js. Right side should have sliders for particle count, speed, spread radius, and a color picker. Add a randomize button.",
+      "expected_output": "A single HTML file in assets/ with an animated particle system in the left Three.js panel, and a right control panel with sliders for count/speed/spread, a color picker, and a Randomize button that updates the scene.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I want a low-poly terrain generator website. On the left, show a Three.js scene with a procedurally generated terrain mesh. On the right, add controls for terrain roughness, height scale, and a color scheme selector (desert, arctic, forest). Include a regenerate button.",
+      "expected_output": "A single HTML file in assets/ with a procedural terrain mesh in the left Three.js panel using a displaced plane geometry, and a right panel with roughness/height controls, a color scheme dropdown, and a Regenerate button.",
+      "files": []
+    }
+  ]
+}

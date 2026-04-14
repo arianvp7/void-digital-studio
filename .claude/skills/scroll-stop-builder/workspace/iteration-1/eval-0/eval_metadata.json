@@ -1,0 +1,17 @@
+{
+  "eval_id": 0,
+  "eval_name": "freshpup-dog-grooming",
+  "prompt": "Build me a landing page for a dog grooming business called FreshPup. We come to your house, groom your dog in our mobile van, and leave. No salons, no cages, no stress for the dog. Target customers are busy dog owners in the suburbs.",
+  "assertions": [
+    {"id": "has_animated_hero_visual", "description": "Hero section contains a business-specific animated visual (van, dog, grooming items)"},
+    {"id": "dark_theme", "description": "Page uses dark background (#0d0d0d or similar dark color)"},
+    {"id": "has_accent_color", "description": "Uses a non-default accent color appropriate for pet/health industry"},
+    {"id": "headline_under_10_words", "description": "Hero headline is 10 words or fewer"},
+    {"id": "no_generic_phrases", "description": "Headline avoids generic phrases like 'world-class', 'innovative', 'seamless'"},
+    {"id": "has_stats_bar", "description": "Stats/social proof section with at least 3 numbers present"},
+    {"id": "has_service_cards", "description": "Service grid with at least 4 cards each having icon, title, description"},
+    {"id": "has_cta_section", "description": "Final CTA section with form input and button"},
+    {"id": "has_fixed_nav", "description": "Navigation bar is fixed/sticky with backdrop blur"},
+    {"id": "css_animations", "description": "Page contains CSS @keyframes animations"}
+  ]
+}

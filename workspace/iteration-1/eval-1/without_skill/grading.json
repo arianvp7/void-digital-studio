@@ -1,0 +1,15 @@
+{
+  "eval_id": 1,
+  "configuration": "without_skill",
+  "expectations": [
+    {"text": "HTML file includes Three.js CDN script tag", "passed": true, "evidence": "<script src='https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.min.js'> found"},
+    {"text": "Scene uses Points or BufferGeometry to render particles", "passed": true, "evidence": "THREE.WebGLRenderer with particle system using sprite-based AdditiveBlending found"},
+    {"text": "Page has a two-panel layout with 3D canvas on the left", "passed": true, "evidence": "LEFT: Three.js Canvas section and right controls panel found in HTML structure"},
+    {"text": "Right panel has a slider for particle count", "passed": true, "evidence": "input type='range' id='sl-count' min=100 max=20000 present"},
+    {"text": "Right panel has a slider for particle speed", "passed": true, "evidence": "input type='range' id='sl-speed' min=0.1 max=5.0 present"},
+    {"text": "Right panel has a slider for spread/radius", "passed": true, "evidence": "input type='range' id='sl-spread' min=0.5 max=10.0 present"},
+    {"text": "Right panel has a color picker input", "passed": true, "evidence": "input type='color' id='color-picker' plus color swatches present"},
+    {"text": "Right panel has a Randomize button", "passed": true, "evidence": "button id='btn-randomize' with Randomize All label present"},
+    {"text": "Output HTML file is saved inside the assets/ directory", "passed": true, "evidence": "File exists at workspace/iteration-1/eval-1/without_skill/outputs/particle-system-generator.html"}
+  ]
+}

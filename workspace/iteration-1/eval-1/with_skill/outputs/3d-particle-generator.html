@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Particle System Generator</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, sans-serif; background: #0f0f0f; color: #eee; display: flex; height: 100vh; overflow: hidden; }
+  #canvas-panel { flex: 1; position: relative; }
+  canvas { display: block; width: 100% !important; height: 100% !important; }
+  #label { position: absolute; top: 12px; left: 16px; font-size: 11px; letter-spacing: 1.5px; color: #555; text-transform: uppercase; pointer-events: none; }
+  #controls-panel {
+    width: 300px; background: #1a1a2e; border-left: 1px solid #2a2a4a;
+    padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 18px;
+  }
+  h1 { font-size: 15px; font-weight: 700; color: #fff; border-bottom: 1px solid #2a2a4a; padding-bottom: 12px; letter-spacing: 0.5px; }
+  .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #666; margin-bottom: 8px; }
+  .control-row { display: flex; flex-direction: column; gap: 6px; }
+  .control-row label { font-size: 12px; color: #9999bb; display: flex; justify-content: space-between; }
+  .control-row label span { color: #c8c8ff; font-weight: 600; }
+  input[type="range"] { width: 100%; accent-color: #7c3aed; height: 4px; }
+  .color-section { display: flex; flex-direction: column; gap: 8px; }
+  .color-presets { display: flex; gap: 6px; flex-wrap: wrap; }
+  .color-swatch {
+    width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+    border: 2px solid transparent; transition: border-color 0.15s; flex-shrink: 0;
+  }
+  .color-swatch:hover, .color-swatch.active { border-color: #fff; }
+  input[type="color"] { width: 100%; height: 34px; border: 1px solid #2a2a4a; border-radius: 6px; background: none; cursor: pointer; padding: 2px; }
+  .btn {
+    border: none; padding: 11px 16px; border-radius: 8px;
+    cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s;
+  }
+  .btn-primary { background: #7c3aed; color: #fff; }
+  .btn-primary:hover { background: #6d28d9; }
+  .btn-secondary { background: #1e1e3a; color: #9999bb; border: 1px solid #2a2a4a; }
+  .btn-secondary:hover { background: #252545; color: #fff; }
+  .btn-row { display: flex; gap: 8px; }
+  .btn-row .btn { flex: 1; }
+  .meta { font-size: 11px; color: #555; background: #111122; padding: 10px 12px; border-radius: 6px; line-height: 1.8; }
+  .meta span { color: #8888cc; }
+  @media (max-width: 700px) {
+    body { flex-direction: column; }
+    #canvas-panel { flex: none; height: 50vh; }
+    #controls-panel { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div id="canvas-panel">
+  <canvas id="c"></canvas>
+  <div id="label">3D Viewport · Drag to orbit</div>
+</div>
+<div id="controls-panel">
+  <h1>Particle Generator</h1>
+
+  <div class="control-row">
+    <label>Particle Count <span id="count-val">5000</span></label>
+    <input type="range" id="count" min="100" max="20000" step="100" value="5000">
+  </div>
+
+  <div class="control-row">
+    <label>Speed <span id="speed-val">1.0</span></label>
+    <input type="range" id="speed" min="0.1" max="5" step="0.1" value="1.0">
+  </div>
+
+  <div class="control-row">
+    <label>Spread Radius <span id="spread-val">5.0</span></label>
+    <input type="range" id="spread" min="0.5" max="15" step="0.5" value="5.0">
+  </div>
+
+  <div class="control-row">
+    <label>Particle Size <span id="psize-val">1.5</span></label>
+    <input type="range" id="psize" min="0.5" max="6" step="0.1" value="1.5">
+  </div>
+
+  <div class="color-section">
+    <div class="section-label">Color</div>
+    <div class="color-presets" id="presets">
+      <div class="color-swatch active" data-color="#7c3aed" style="background:#7c3aed"></div>
+      <div class="color-swatch" data-color="#2563eb" style="background:#2563eb"></div>
+      <div class="color-swatch" data-color="#0891b2" style="background:#0891b2"></div>
+      <div class="color-swatch" data-color="#059669" style="background:#059669"></div>
+      <div class="color-swatch" data-color="#d97706" style="background:#d97706"></div>
+      <div class="color-swatch" data-color="#dc2626" style="background:#dc2626"></div>
+      <div class="color-swatch" data-color="#ec4899" style="background:#ec4899"></div>
+      <div class="color-swatch" data-color="#ffffff" style="background:#ffffff"></div>
+    </div>
+    <input type="color" id="color-picker" value="#7c3aed">
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" id="randomize-btn">Randomize</button>
+    <button class="btn btn-secondary" id="reset-btn">Reset</button>
+  </div>
+
+  <div class="meta" id="meta">
+    Particles: <span id="m-count">5000</span><br>
+    Speed: <span id="m-speed">1.0</span><br>
+    Spread: <span id="m-spread">5.0</span>
+  </div>
+</div>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const canvas = document.getElementById('c');
+const panel = document.getElementById('canvas-panel');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0f0f0f);
+
+const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 200);
+camera.position.set(0, 2, 12);
+
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.07;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.4;
+
+let params = { count: 5000, speed: 1.0, spread: 5.0, psize: 1.5, color: '#7c3aed' };
+let points = null;
+let velocities = null;
+let origins = null;
+const clock = new THREE.Clock();
+
+function buildParticles() {
+  if (points) { scene.remove(points); points.geometry.dispose(); points.material.dispose(); }
+  const { count, spread } = params;
+  const positions = new Float32Array(count * 3);
+  velocities = new Float32Array(count * 3);
+  origins = new Float32Array(count * 3);
+
+  for (let i = 0; i < count; i++) {
+    const r = spread * Math.cbrt(Math.random());
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    const x = r * Math.sin(phi) * Math.cos(theta);
+    const y = r * Math.sin(phi) * Math.sin(theta);
+    const z = r * Math.cos(phi);
+    positions[i*3] = x; positions[i*3+1] = y; positions[i*3+2] = z;
+    origins[i*3] = x; origins[i*3+1] = y; origins[i*3+2] = z;
+    velocities[i*3]   = (Math.random()-0.5)*0.02;
+    velocities[i*3+1] = (Math.random()-0.5)*0.02;
+    velocities[i*3+2] = (Math.random()-0.5)*0.02;
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+  const mat = new THREE.PointsMaterial({
+    color: new THREE.Color(params.color),
+    size: params.psize * 0.05,
+    sizeAttenuation: true,
+    transparent: true,
+    opacity: 0.85,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+
+  points = new THREE.Points(geo, mat);
+  scene.add(points);
+}
+
+buildParticles();
+
+function updateMeta() {
+  document.getElementById('m-count').textContent = params.count.toLocaleString();
+  document.getElementById('m-speed').textContent = params.speed.toFixed(1);
+  document.getElementById('m-spread').textContent = params.spread.toFixed(1);
+}
+
+// Controls
+const inputs = {
+  count:  { el: document.getElementById('count'),  val: document.getElementById('count-val'),  key: 'count',  fmt: v => Math.round(v).toLocaleString(), rebuild: true },
+  speed:  { el: document.getElementById('speed'),  val: document.getElementById('speed-val'),  key: 'speed',  fmt: v => v.toFixed(1), rebuild: false },
+  spread: { el: document.getElementById('spread'), val: document.getElementById('spread-val'), key: 'spread', fmt: v => v.toFixed(1), rebuild: true },
+  psize:  { el: document.getElementById('psize'),  val: document.getElementById('psize-val'),  key: 'psize',  fmt: v => v.toFixed(1), rebuild: false },
+};
+Object.values(inputs).forEach(({ el, val, key, fmt, rebuild }) => {
+  el.addEventListener('input', () => {
+    params[key] = +el.value;
+    val.textContent = fmt(params[key]);
+    if (rebuild) buildParticles();
+    else if (key === 'psize' && points) points.material.size = params.psize * 0.05;
+    updateMeta();
+  });
+});
+
+document.getElementById('color-picker').addEventListener('input', e => {
+  params.color = e.target.value;
+  if (points) points.material.color.set(params.color);
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+});
+
+document.querySelectorAll('.color-swatch').forEach(s => {
+  s.addEventListener('click', () => {
+    params.color = s.dataset.color;
+    document.getElementById('color-picker').value = params.color;
+    document.querySelectorAll('.color-swatch').forEach(x => x.classList.remove('active'));
+    s.classList.add('active');
+    if (points) points.material.color.set(params.color);
+  });
+});
+
+document.getElementById('randomize-btn').addEventListener('click', () => {
+  params.count = Math.floor(Math.random() * 19901) + 100;
+  params.speed = +(Math.random() * 4.9 + 0.1).toFixed(1);
+  params.spread = +(Math.random() * 14.5 + 0.5).toFixed(1);
+  params.psize = +(Math.random() * 5.5 + 0.5).toFixed(1);
+  const hue = Math.floor(Math.random() * 360);
+  params.color = `hsl(${hue}, 90%, 60%)`;
+  document.getElementById('count').value = params.count;
+  document.getElementById('count-val').textContent = params.count.toLocaleString();
+  document.getElementById('speed').value = params.speed;
+  document.getElementById('speed-val').textContent = params.speed.toFixed(1);
+  document.getElementById('spread').value = params.spread;
+  document.getElementById('spread-val').textContent = params.spread.toFixed(1);
+  document.getElementById('psize').value = params.psize;
+  document.getElementById('psize-val').textContent = params.psize.toFixed(1);
+  buildParticles();
+  updateMeta();
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+  params = { count: 5000, speed: 1.0, spread: 5.0, psize: 1.5, color: '#7c3aed' };
+  document.getElementById('count').value = params.count; document.getElementById('count-val').textContent = params.count;
+  document.getElementById('speed').value = params.speed; document.getElementById('speed-val').textContent = params.speed;
+  document.getElementById('spread').value = params.spread; document.getElementById('spread-val').textContent = params.spread;
+  document.getElementById('psize').value = params.psize; document.getElementById('psize-val').textContent = params.psize;
+  document.getElementById('color-picker').value = params.color;
+  buildParticles();
+  updateMeta();
+});
+
+function resize() {
+  const w = panel.clientWidth, h = panel.clientHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(panel);
+resize();
+
+(function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  const s = params.speed;
+  if (points) {
+    const pos = points.geometry.attributes.position.array;
+    for (let i = 0; i < params.count; i++) {
+      pos[i*3]   += velocities[i*3]   * s + Math.sin(t * 0.7 + i) * 0.0005;
+      pos[i*3+1] += velocities[i*3+1] * s + Math.cos(t * 0.5 + i) * 0.0005;
+      pos[i*3+2] += velocities[i*3+2] * s;
+      // Spring back
+      pos[i*3]   += (origins[i*3]   - pos[i*3])   * 0.003;
+      pos[i*3+1] += (origins[i*3+1] - pos[i*3+1]) * 0.003;
+      pos[i*3+2] += (origins[i*3+2] - pos[i*3+2]) * 0.003;
+    }
+    points.geometry.attributes.position.needsUpdate = true;
+  }
+  controls.update();
+  renderer.render(scene, camera);
+})();
+</script>
+</body>
+</html>

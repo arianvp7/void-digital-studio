@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FreshPup — Groomed at Your Door. Not in a Cage.</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:#0d0d0d;color:#fff;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(13,13,13,0.88);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,0.06)}
+.logo{font-size:22px;font-weight:900;letter-spacing:-0.5px}.logo span{color:#10b981}
+nav ul{list-style:none;display:flex;gap:32px}
+nav a{color:#aaa;text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+nav a:hover{color:#fff}
+.nav-cta{background:#10b981;color:#fff;border:none;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
+.nav-cta:hover{background:#0d9e6e}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 60px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(16,185,129,0.15) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#10b981;margin-bottom:20px}
+h1{font-size:clamp(44px,7vw,84px);font-weight:900;line-height:1.0;letter-spacing:-2px;margin-bottom:24px;max-width:850px}
+h1 em{color:#10b981;font-style:normal}
+.hero p{font-size:clamp(16px,2vw,20px);color:#777;max-width:500px;line-height:1.65;margin-bottom:40px}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:64px}
+.btn-primary{background:#10b981;color:#fff;border:none;padding:16px 36px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-primary:hover{background:#0d9e6e;transform:translateY(-1px);box-shadow:0 8px 24px rgba(16,185,129,0.35)}
+.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.2);padding:16px 36px;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.5)}
+
+/* VAN SCENE */
+.van-scene{width:100%;max-width:800px;height:320px;position:relative;margin:0 auto}
+.item{position:absolute;font-size:38px;animation:float var(--dur,2.8s) var(--delay,0s) ease-in-out infinite alternate}
+@keyframes float{0%{transform:translate(0,0) rotate(var(--r0,0deg)) scale(0.9)}100%{transform:translate(var(--tx,0),var(--ty,-20px)) rotate(var(--r1,10deg)) scale(1.1)}}
+.sparkle{position:absolute;font-size:20px;animation:sparkle 1.5s var(--delay,0s) ease-in-out infinite}
+@keyframes sparkle{0%,100%{opacity:0;transform:scale(0.5)}50%{opacity:1;transform:scale(1.2)}}
+.steam{position:absolute;font-size:28px;animation:rise 2s var(--delay,0s) ease-out infinite;opacity:0}
+@keyframes rise{0%{opacity:0;transform:translateY(0) scale(0.8)}40%{opacity:0.8}100%{opacity:0;transform:translateY(-60px) scale(1.3)}}
+
+/* STATS */
+.stats{background:rgba(255,255,255,0.03);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;justify-content:center;flex-wrap:wrap;padding:48px 24px}
+.stat{text-align:center;padding:0 52px;border-right:1px solid rgba(255,255,255,0.08)}
+.stat:last-child{border-right:none}
+.stat-num{font-size:40px;font-weight:900;color:#10b981;letter-spacing:-1px}
+.stat-label{font-size:13px;color:#555;margin-top:4px;font-weight:500}
+
+/* SERVICES */
+.services{padding:100px 24px;max-width:1100px;margin:0 auto}
+.section-label{text-align:center;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#10b981;margin-bottom:14px}
+.section-title{text-align:center;font-size:clamp(28px,4vw,44px);font-weight:900;letter-spacing:-1px;margin-bottom:64px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:32px;transition:border-color .2s,transform .2s}
+.card:hover{border-color:rgba(16,185,129,0.4);transform:translateY(-3px)}
+.card-icon{font-size:34px;margin-bottom:16px}
+.card h3{font-size:18px;font-weight:700;margin-bottom:10px}
+.card p{font-size:14px;color:#666;line-height:1.65}
+
+/* CTA */
+.cta-section{text-align:center;padding:100px 24px;background:linear-gradient(180deg,transparent,rgba(16,185,129,0.06),transparent)}
+.cta-section h2{font-size:clamp(30px,5vw,52px);font-weight:900;letter-spacing:-1.5px;margin-bottom:16px}
+.cta-section p{font-size:18px;color:#666;margin-bottom:40px}
+.quote-form{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;max-width:500px;margin:0 auto}
+.quote-form input{flex:1;min-width:200px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:14px 18px;border-radius:10px;font-size:15px;outline:none;transition:border-color .2s}
+.quote-form input:focus{border-color:#10b981}
+.quote-form input::placeholder{color:#555}
+footer{text-align:center;padding:32px 24px;border-top:1px solid rgba(255,255,255,0.06);font-size:13px;color:#444}
+@media(max-width:600px){nav ul{display:none}nav{padding:16px 24px}.stat{padding:16px 24px;border-right:none;border-bottom:1px solid rgba(255,255,255,0.08)}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">Fresh<span>Pup</span></div>
+  <ul><li><a href="#">How It Works</a></li><li><a href="#">Services</a></li><li><a href="#">Reviews</a></li><li><a href="#">Pricing</a></li></ul>
+  <button class="nav-cta">Book a Groom</button>
+</nav>
+
+<section class="hero">
+  <div class="eyebrow">Mobile Dog Grooming · We Come to You</div>
+  <h1>Groomed at Your Door.<br><em>Not in a Cage.</em></h1>
+  <p>No drop-offs, no kennels, no stressed-out pup waiting for hours. Our van pulls up, we groom, we leave. Your dog never even knows they left home.</p>
+  <div class="hero-btns">
+    <button class="btn-primary">Book My Dog's Groom</button>
+    <button class="btn-ghost">See How It Works</button>
+  </div>
+
+  <!-- VAN SCENE -->
+  <div class="van-scene">
+    <!-- Floating grooming items -->
+    <div class="item" style="left:12%;top:30%;--tx:0px;--ty:-18px;--r0:-8deg;--r1:8deg;--dur:2.4s;--delay:0s">✂️</div>
+    <div class="item" style="left:22%;top:15%;--tx:-8px;--ty:-22px;--r0:5deg;--r1:-5deg;--dur:3.1s;--delay:0.4s">🛁</div>
+    <div class="item" style="left:68%;top:12%;--tx:8px;--ty:-20px;--r0:-6deg;--r1:6deg;--dur:2.7s;--delay:0.2s">🪮</div>
+    <div class="item" style="left:78%;top:28%;--tx:12px;--ty:-15px;--r0:4deg;--r1:-10deg;--dur:3.3s;--delay:0.6s">🧴</div>
+    <div class="item" style="left:50%;top:8%;--tx:0px;--ty:-25px;--r0:-4deg;--r1:4deg;--dur:2.9s;--delay:0.8s">🐾</div>
+    <!-- Sparkles -->
+    <div class="sparkle" style="left:35%;top:35%;--delay:0s">✨</div>
+    <div class="sparkle" style="left:58%;top:22%;--delay:0.5s">✨</div>
+    <div class="sparkle" style="left:20%;top:55%;--delay:1.0s">⭐</div>
+    <div class="sparkle" style="left:75%;top:50%;--delay:0.7s">✨</div>
+    <!-- Steam/clean puffs -->
+    <div class="steam" style="left:48%;top:55%;--delay:0s">💨</div>
+    <div class="steam" style="left:44%;top:55%;--delay:0.8s">💨</div>
+    <div class="steam" style="left:52%;top:55%;--delay:1.6s">💨</div>
+
+    <!-- Van SVG -->
+    <svg viewBox="0 0 720 220" style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:min(720px,100%)" xmlns="http://www.w3.org/2000/svg">
+      <!-- Body -->
+      <rect x="20" y="60" width="540" height="130" rx="10" fill="#151515" stroke="#222" stroke-width="1.5"/>
+      <!-- Cab -->
+      <rect x="510" y="80" width="130" height="110" rx="8" fill="#111" stroke="#2a2a2a" stroke-width="1.5"/>
+      <!-- Windshield -->
+      <rect x="522" y="90" width="100" height="52" rx="4" fill="#0a2030" stroke="#1a4060" stroke-width="1"/>
+      <!-- Side panel - green brand -->
+      <rect x="20" y="60" width="490" height="130" rx="10" fill="#0d1f18" stroke="#10b981" stroke-width="2"/>
+      <!-- Logo text -->
+      <text x="120" y="118" font-family="system-ui" font-weight="900" font-size="26" fill="#10b981">FreshPup</text>
+      <text x="120" y="140" font-family="system-ui" font-size="13" fill="#1a5e3e">🐾 Mobile Grooming · We Come to You</text>
+      <!-- Dog in window -->
+      <text x="54" y="148" font-size="52">🐶</text>
+      <!-- Wheels -->
+      <circle cx="130" cy="198" r="28" fill="#111" stroke="#10b981" stroke-width="3"/>
+      <circle cx="130" cy="198" r="12" fill="#1a1a1a" stroke="#333" stroke-width="2"/>
+      <circle cx="480" cy="198" r="28" fill="#111" stroke="#10b981" stroke-width="3"/>
+      <circle cx="480" cy="198" r="12" fill="#1a1a1a" stroke="#333" stroke-width="2"/>
+      <circle cx="590" cy="198" r="28" fill="#111" stroke="#333" stroke-width="2"/>
+      <circle cx="590" cy="198" r="12" fill="#1a1a1a" stroke="#333" stroke-width="2"/>
+      <!-- Headlight -->
+      <rect x="634" y="148" width="14" height="9" rx="2" fill="#ffd700" opacity="0.9"/>
+    </svg>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stat"><div class="stat-num">3,200+</div><div class="stat-label">Happy dogs groomed</div></div>
+  <div class="stat"><div class="stat-num">4.9★</div><div class="stat-label">Average review rating</div></div>
+  <div class="stat"><div class="stat-num">0</div><div class="stat-label">Cages. Ever.</div></div>
+  <div class="stat"><div class="stat-num">90min</div><div class="stat-label">Average groom time</div></div>
+</div>
+
+<section class="services">
+  <div class="section-label">What We Offer</div>
+  <h2 class="section-title">Every service, at your curb.</h2>
+  <div class="cards">
+    <div class="card"><div class="card-icon">🚐</div><h3>Mobile Full Groom</h3><p>Bath, blow dry, haircut, nails, ears, and teeth brushing — all done in our fully equipped van parked outside your home.</p></div>
+    <div class="card"><div class="card-icon">✂️</div><h3>Breed-Specific Cuts</h3><p>Our groomers are trained on 40+ breeds. Your Doodle, Poodle, or Schnauzer gets the cut it's supposed to have.</p></div>
+    <div class="card"><div class="card-icon">🛁</div><h3>Bath & Brush</h3><p>Premium shampoo, conditioner, blow dry, and a thorough brush-out. Perfect for in-between full grooms.</p></div>
+    <div class="card"><div class="card-icon">💅</div><h3>Nail Trim & Grind</h3><p>Quick, stress-free nail trims — including a grind to smooth sharp edges. No quicked nails, guaranteed.</p></div>
+    <div class="card"><div class="card-icon">👂</div><h3>Ear Cleaning</h3><p>Gentle ear cleaning and plucking to prevent infections. Especially important for floppy-eared breeds.</p></div>
+    <div class="card"><div class="card-icon">🐾</div><h3>Puppy's First Groom</h3><p>A calm, positive first experience that sets your pup up to love grooming for life. Patience included.</p></div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>Your dog deserves<br>better than a cage.</h2>
+  <p>Book in 60 seconds. We'll text you when we're 30 minutes away.</p>
+  <div class="quote-form">
+    <input type="text" placeholder="Your zip code">
+    <button class="btn-primary">Book My Dog's Groom</button>
+  </div>
+</section>
+<footer>© 2026 FreshPup Mobile Grooming · Licensed & Insured · hello@freshpup.com</footer>
+</body>
+</html>

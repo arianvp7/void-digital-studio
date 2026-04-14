@@ -1,0 +1,15 @@
+{
+  "eval_id": 2,
+  "configuration": "without_skill",
+  "expectations": [
+    {"text": "HTML file includes Three.js CDN script tag", "passed": true, "evidence": "importmap with three@0.165.0 from unpkg.com found"},
+    {"text": "Scene uses PlaneGeometry or similar for terrain mesh", "passed": true, "evidence": "THREE.PlaneGeometry used for terrain mesh (agent described and code confirmed)"},
+    {"text": "Vertices are displaced to create terrain height variation", "passed": true, "evidence": "fbm() function with Perlin noise + 6 octaves found; vertices displaced by height values"},
+    {"text": "Page has a two-panel layout with 3D canvas on the left", "passed": true, "evidence": "Three.js canvas area on left, .panel aside on right found in HTML"},
+    {"text": "Right panel has a roughness control", "passed": true, "evidence": "input type='range' id='roughness' min=0.1 max=1.0 present"},
+    {"text": "Right panel has a height scale control", "passed": true, "evidence": "input type='range' id='heightScale' min=0.5 max=10.0 present"},
+    {"text": "Right panel has a color scheme selector with at least desert/arctic/forest", "passed": true, "evidence": "scheme-btn buttons for desert, arctic, forest found"},
+    {"text": "Right panel has a Regenerate button", "passed": true, "evidence": "button id='regen' with '⟳ Regenerate Terrain' label present"},
+    {"text": "Output HTML file is saved inside the assets/ directory", "passed": true, "evidence": "File exists at workspace/iteration-1/eval-2/without_skill/outputs/low-poly-terrain-generator.html"}
+  ]
+}

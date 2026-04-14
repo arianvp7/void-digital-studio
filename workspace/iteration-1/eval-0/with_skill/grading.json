@@ -1,0 +1,13 @@
+{
+  "eval_id": 0,
+  "configuration": "with_skill",
+  "expectations": [
+    {"text": "HTML file includes Three.js CDN script tag", "passed": true, "evidence": "Found <script src='https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js'>"},
+    {"text": "OrbitControls are included and initialized", "passed": true, "evidence": "OrbitControls.js loaded from CDN; new THREE.OrbitControls(camera, renderer.domElement) present"},
+    {"text": "Page has a two-panel layout with 3D canvas on the left", "passed": true, "evidence": "#canvas-panel on left and #controls-panel on right found in HTML"},
+    {"text": "Right panel has controls to select shape type (cube/sphere/torus)", "passed": true, "evidence": "shape-btn elements for multiple shapes including cube, sphere, torus found"},
+    {"text": "Right panel has a color control (input or picker)", "passed": true, "evidence": "color-swatch and color-row elements with color inputs found"},
+    {"text": "Right panel has a size/scale control", "passed": true, "evidence": "Multiple range inputs found including scale/size controls"},
+    {"text": "Output HTML file is saved inside the assets/ directory", "passed": true, "evidence": "File exists at workspace/iteration-1/eval-0/with_skill/outputs/3d-geometry-generator.html"}
+  ]
+}

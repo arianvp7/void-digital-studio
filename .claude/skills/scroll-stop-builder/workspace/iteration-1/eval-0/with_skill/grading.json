@@ -1,0 +1,12 @@
+{"eval_id":0,"configuration":"with_skill","expectations":[
+  {"text":"Hero contains a business-specific animated visual (van, dog, grooming items)","passed":true,"evidence":"Van SVG with floating ✂️🛁🪮🧴🐾 emoji items using @keyframes float animation; sparkle and steam animations also present"},
+  {"text":"Page uses dark background (#0d0d0d or similar dark color)","passed":true,"evidence":"body background:#0d0d0d"},
+  {"text":"Uses a non-default accent color appropriate for pet/health industry","passed":true,"evidence":"#10b981 green accent used throughout (buttons, stat numbers, borders, logo)"},
+  {"text":"Hero headline is 10 words or fewer","passed":true,"evidence":"'Groomed at Your Door. Not in a Cage.' = 9 words"},
+  {"text":"Headline avoids generic phrases like 'world-class', 'innovative', 'seamless'","passed":true,"evidence":"No generic phrases found; headline uses contrast and specificity"},
+  {"text":"Stats/social proof section with at least 3 numbers present","passed":true,"evidence":"4 stats: 3,200+ dogs, 4.9★, 0 cages, 90min"},
+  {"text":"Service grid with at least 4 cards each having icon, title, description","passed":true,"evidence":"6 service cards with emoji icon, h3 title, and p description each"},
+  {"text":"Final CTA section with form input and button","passed":true,"evidence":"cta-section with zip code input and 'Book My Dog's Groom' button"},
+  {"text":"Navigation bar is fixed/sticky with backdrop blur","passed":true,"evidence":"nav { position:fixed; backdrop-filter:blur(14px) }"},
+  {"text":"Page contains CSS @keyframes animations","passed":true,"evidence":"@keyframes float, sparkle, rise all defined and applied to hero elements"}
+]}

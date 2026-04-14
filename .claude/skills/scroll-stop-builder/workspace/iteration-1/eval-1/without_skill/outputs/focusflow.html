@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FocusFlow - Productivity App for Remote Workers</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:#f9fafb;color:#111}
+header{background:#fff;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:10}
+.logo{font-size:20px;font-weight:800;color:#0891b2}
+nav a{margin-left:24px;text-decoration:none;color:#555;font-size:14px;font-weight:500}
+.cta-btn{background:#0891b2;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-left:24px}
+.hero{background:linear-gradient(135deg,#ecfeff,#cffafe);padding:80px 40px;text-align:center}
+.hero-icon{font-size:72px;margin-bottom:24px}
+.hero h1{font-size:48px;font-weight:900;color:#164e63;margin-bottom:16px;line-height:1.1}
+.hero p{font-size:18px;color:#0e7490;max-width:540px;margin:0 auto 32px;line-height:1.6}
+.hero-cta{background:#0891b2;color:#fff;border:none;padding:16px 32px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-right:12px}
+.hero-secondary{background:transparent;color:#0891b2;border:2px solid #0891b2;padding:16px 32px;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer}
+.stats{display:flex;justify-content:center;gap:64px;padding:48px 40px;background:#fff;border-bottom:1px solid #e5e7eb;text-align:center}
+.stat h3{font-size:36px;font-weight:900;color:#0891b2}
+.stat p{font-size:13px;color:#888;margin-top:4px}
+.features{padding:80px 40px;max-width:1000px;margin:0 auto}
+.features h2{font-size:36px;font-weight:800;text-align:center;margin-bottom:48px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.card{background:#fff;border-radius:12px;padding:28px;border:1px solid #e5e7eb;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.card span{font-size:32px}.card h3{font-size:17px;font-weight:700;margin:12px 0 8px}.card p{font-size:14px;color:#666;line-height:1.6}
+.cta{background:#0c4a6e;color:#fff;text-align:center;padding:80px 40px}
+.cta h2{font-size:36px;font-weight:800;margin-bottom:16px}
+.cta p{font-size:16px;opacity:0.8;margin-bottom:32px}
+.cta input{padding:14px 18px;border-radius:8px;border:none;font-size:15px;width:260px;margin-right:12px}
+.cta button{background:#0891b2;color:#fff;border:none;padding:14px 28px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer}
+footer{text-align:center;padding:24px;background:#f1f5f9;font-size:13px;color:#888}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">⏱ FocusFlow</div>
+  <div>
+    <a href="#">Features</a><a href="#">Pricing</a><a href="#">Reviews</a>
+    <button class="cta-btn">Start Free Trial</button>
+  </div>
+</header>
+<section class="hero">
+  <div class="hero-icon">🎯</div>
+  <h1>Stay Focused.<br>Get More Done.</h1>
+  <p>FocusFlow blocks distracting websites and keeps you on track with a built-in focus timer. Designed for remote workers who want to do their best work.</p>
+  <button class="hero-cta">Start Free Trial</button>
+  <button class="hero-secondary">See How It Works</button>
+</section>
+<div class="stats">
+  <div class="stat"><h3>2.4hrs</h3><p>Reclaimed daily, avg user</p></div>
+  <div class="stat"><h3>47,000</h3><p>Remote workers</p></div>
+  <div class="stat"><h3>94%</h3><p>Still using after 30 days</p></div>
+  <div class="stat"><h3>7min</h3><p>Setup time</p></div>
+</div>
+<section class="features">
+  <h2>Everything you need to focus</h2>
+  <div class="grid">
+    <div class="card"><span>🚫</span><h3>Site Blocking</h3><p>Block any distracting site with one click. Set custom schedules for work hours.</p></div>
+    <div class="card"><span>⏱️</span><h3>Focus Timer</h3><p>Pomodoro-style timer keeps you in flow with 25-minute sprints and 5-minute breaks.</p></div>
+    <div class="card"><span>📊</span><h3>Weekly Reports</h3><p>See exactly where your hours went with detailed focus analytics.</p></div>
+    <div class="card"><span>🔒</span><h3>Lockdown Mode</h3><p>Lock your settings so you can't override your own blocks during deep work.</p></div>
+    <div class="card"><span>🎯</span><h3>Daily Goals</h3><p>Set focus targets each morning and track your progress throughout the day.</p></div>
+    <div class="card"><span>🔗</span><h3>App Integrations</h3><p>Connects with Notion, Linear, and your other tools to log focus sessions automatically.</p></div>
+  </div>
+</section>
+<section class="cta">
+  <h2>Ready to get focused?</h2>
+  <p>Start your free 14-day trial. No credit card required.</p>
+  <input type="email" placeholder="your@email.com">
+  <button>Start Free Trial</button>
+</section>
+<footer>© 2026 FocusFlow · For remote workers who want to do their best work</footer>
+</body>
+</html>

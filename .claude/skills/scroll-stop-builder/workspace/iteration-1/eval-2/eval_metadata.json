@@ -1,0 +1,17 @@
+{
+  "eval_id": 2,
+  "eval_name": "morning-knead-sourdough-bakery",
+  "prompt": "Create a landing page for a local bakery called The Morning Knead in Portland. Everything sourdough — bread, pastries, pizza dough. They sell online and deliver locally. Rustic but modern vibe.",
+  "assertions": [
+    {"id": "has_animated_hero_visual", "description": "Hero contains an animated bakery visual (rising bread, steam, flying pastries)"},
+    {"id": "dark_theme", "description": "Page uses dark background"},
+    {"id": "has_amber_accent", "description": "Uses warm amber/golden accent color appropriate for food/bakery"},
+    {"id": "headline_under_10_words", "description": "Hero headline is 10 words or fewer"},
+    {"id": "no_generic_phrases", "description": "Headline is specific to sourdough, not generic"},
+    {"id": "has_stats_bar", "description": "Stats section with at least 3 numbers"},
+    {"id": "has_product_cards", "description": "Product grid with at least 4 cards"},
+    {"id": "has_cta_section", "description": "Final CTA/delivery section with form and button"},
+    {"id": "mentions_portland", "description": "Copy mentions Portland for local identity"},
+    {"id": "css_animations", "description": "Page contains CSS @keyframes animations"}
+  ]
+}

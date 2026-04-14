@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Apple</title>
+<style>
+/* ─── TYPOGRAPHY: match Apple SF Pro stack ─────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --apple-black: #1d1d1f;
+  --apple-grey:  #6e6e73;
+  --apple-bg:    #f5f5f7;
+  --apple-white: #ffffff;
+  --apple-blue:  #0066cc;
+  --apple-blue-hover: #0077ed;
+  --nav-height:  48px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  background: var(--apple-white);
+  color: var(--apple-black);
+  overflow-x: hidden;
+}
+
+/* ─── NAV ───────────────────────────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--nav-height);
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.4s;
+}
+
+nav.dark {
+  background: rgba(29,29,31,0.72);
+}
+
+nav.dark .nav-link { color: rgba(255,255,255,0.8); }
+nav.dark .nav-link:hover { color: #fff; }
+
+.nav-inner {
+  width: 100%;
+  max-width: 980px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.nav-logo { color: var(--apple-black); opacity: 0.8; }
+nav.dark .nav-logo { color: #fff; }
+
+.nav-links {
+  display: flex;
+  gap: 0;
+  list-style: none;
+}
+
+.nav-link {
+  color: var(--apple-black);
+  opacity: 0.8;
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: -0.01em;
+  padding: 0 11px;
+  transition: opacity 0.2s;
+}
+.nav-link:hover { opacity: 1; }
+
+.nav-actions { display: flex; gap: 16px; align-items: center; }
+.nav-icon { opacity: 0.8; cursor: pointer; color: var(--apple-black); }
+nav.dark .nav-icon { color: #fff; }
+
+/* ─── HERO SECTION ──────────────────────────────────────────────────── */
+.hero {
+  padding-top: var(--nav-height);
+}
+
+/* ─── TILE GRID ─────────────────────────────────────────────────────── */
+.tile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 8px;
+}
+
+.tile-grid-full {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding: 0 8px;
+}
+
+/* ─── TILE ───────────────────────────────────────────────────────────── */
+.tile {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--apple-bg);
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  padding: 56px 40px 40px;
+  cursor: pointer;
+
+  /* scroll-reveal starting state */
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.tile.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* stagger siblings */
+.tile:nth-child(2) { transition-delay: 0.12s; }
+.tile:nth-child(3) { transition-delay: 0.08s; }
+.tile:nth-child(4) { transition-delay: 0.16s; }
+
+.tile.theme-dark {
+  background: #1d1d1f;
+  color: #f5f5f7;
+}
+.tile.theme-dark .tile-subhead { color: rgba(245,245,247,0.7); }
+
+/* hover float */
+.tile { transition-property: opacity, transform, box-shadow; }
+.tile:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.14);
+}
+.tile.visible:hover {
+  transform: translateY(-6px) scale(1.01);
+}
+
+/* ─── TILE COPY ──────────────────────────────────────────────────────── */
+.tile-eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--apple-blue);
+  margin-bottom: 8px;
+
+  /* animate in when tile becomes visible */
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s 0.3s, transform 0.5s 0.3s;
+}
+.tile.visible .tile-eyebrow { opacity: 1; transform: translateY(0); }
+
+.tile-headline {
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.07;
+  margin-bottom: 8px;
+
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s 0.35s, transform 0.6s 0.35s;
+}
+.tile.visible .tile-headline { opacity: 1; transform: translateY(0); }
+
+.tile-subhead {
+  font-size: clamp(17px, 2vw, 21px);
+  font-weight: 400;
+  color: var(--apple-grey);
+  line-height: 1.38;
+  margin-bottom: 24px;
+
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s 0.42s, transform 0.6s 0.42s;
+}
+.tile.visible .tile-subhead { opacity: 1; transform: translateY(0); }
+
+/* ─── CTAs ───────────────────────────────────────────────────────────── */
+.tile-ctas {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 40px;
+
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.6s 0.5s, transform 0.6s 0.5s;
+}
+.tile.visible .tile-ctas { opacity: 1; transform: translateY(0); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  padding: 0 16px;
+  border-radius: 980px;
+  font-size: 14px;
+  font-weight: 400;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  transition: background 0.2s, color 0.2s, transform 0.18s;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ripple shimmer on hover */
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
+  transform: translateX(-100%);
+  transition: transform 0.5s;
+}
+.btn:hover::after { transform: translateX(100%); }
+
+.btn-primary {
+  background: var(--apple-blue);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--apple-blue-hover);
+  transform: scale(1.04);
+}
+
+.btn-secondary {
+  background: rgba(0,0,0,0.06);
+  color: var(--apple-blue);
+  border: 1px solid rgba(0,0,0,0.08);
+}
+.btn-secondary:hover {
+  background: rgba(0,0,0,0.1);
+  transform: scale(1.04);
+}
+
+.tile.theme-dark .btn-secondary {
+  background: rgba(255,255,255,0.12);
+  color: #2997ff;
+  border-color: rgba(255,255,255,0.08);
+}
+.tile.theme-dark .btn-secondary:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* ─── TILE IMAGE ─────────────────────────────────────────────────────── */
+.tile-image-wrap {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* floating product animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33%       { transform: translateY(-8px) rotate(0.5deg); }
+  66%       { transform: translateY(-14px) rotate(-0.5deg); }
+}
+
+.product-visual {
+  max-width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  animation: float 5s ease-in-out infinite;
+  will-change: transform;
+
+  opacity: 0;
+  transition: opacity 0.8s 0.55s;
+}
+.tile.visible .product-visual { opacity: 1; }
+
+.tile:nth-child(2) .product-visual { animation-delay: -1.5s; }
+.tile:nth-child(3) .product-visual { animation-delay: -2.8s; }
+.tile:nth-child(4) .product-visual { animation-delay: -0.7s; }
+
+/* ─── PRODUCT EMOJI FALLBACK VISUALS ────────────────────────────────── */
+.product-emoji {
+  font-size: clamp(80px, 18vw, 180px);
+  line-height: 1;
+  display: block;
+  animation: float-slow 6s ease-in-out infinite;
+  will-change: transform;
+  user-select: none;
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
+
+  opacity: 0;
+  transition: opacity 0.8s 0.55s;
+}
+.tile.visible .product-emoji { opacity: 1; }
+
+/* animated glow ring behind emoji */
+.glow-ring {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.8s 0.7s;
+}
+.tile.visible .glow-ring { opacity: 1; }
+
+@keyframes pulse-glow {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.3; }
+  50%       { transform: translateX(-50%) scale(1.15); opacity: 0.6; }
+}
+.glow-ring { animation: pulse-glow 4s ease-in-out infinite; }
+
+/* ─── HEADLINE HERO (first tile, full-width) ─────────────────────────── */
+.tile-hero {
+  min-height: 560px;
+  background: linear-gradient(160deg, #1c1c1e 0%, #2c2c2e 100%);
+  color: #f5f5f7;
+  border-radius: 18px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* animated gradient sweep */
+.tile-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    #007aff22 0deg,
+    #00c7ff11 90deg,
+    transparent 180deg,
+    #bf5af222 270deg,
+    #007aff22 360deg
+  );
+  animation: spin-gradient 12s linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes spin-gradient {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ─── PROMO GRID ─────────────────────────────────────────────────────── */
+.promo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 0 8px 8px;
+}
+
+/* ─── MARQUEE ─────────────────────────────────────────────────────────── */
+.marquee-section {
+  background: var(--apple-bg);
+  padding: 40px 0;
+  overflow: hidden;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.marquee-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 40px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--apple-grey);
+  white-space: nowrap;
+}
+
+.marquee-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--apple-grey);
+  opacity: 0.4;
+}
+
+/* ─── STATS SECTION ──────────────────────────────────────────────────── */
+.stats-section {
+  background: var(--apple-white);
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  max-width: 860px;
+  margin: 0 auto;
+  gap: 20px;
+}
+
+.stat-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s, transform 0.6s;
+}
+.stat-item.visible { opacity: 1; transform: translateY(0); }
+.stat-item:nth-child(2) { transition-delay: 0.1s; }
+.stat-item:nth-child(3) { transition-delay: 0.2s; }
+.stat-item:nth-child(4) { transition-delay: 0.3s; }
+
+.stat-number {
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--apple-black);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 15px;
+  color: var(--apple-grey);
+  line-height: 1.4;
+}
+
+/* ─── CTA SECTION ────────────────────────────────────────────────────── */
+.cta-section {
+  background: var(--apple-black);
+  color: #f5f5f7;
+  padding: 100px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* animated radial glow */
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(ellipse at center, rgba(0,122,255,0.2) 0%, transparent 70%);
+  animation: breathe-glow 6s ease-in-out infinite;
+}
+
+@keyframes breathe-glow {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+  50%       { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+}
+
+.cta-content { position: relative; z-index: 1; }
+
+.cta-headline {
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 16px;
+
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s, transform 0.7s;
+}
+.cta-section.visible .cta-headline { opacity: 1; transform: translateY(0); }
+
+.cta-sub {
+  font-size: 19px;
+  color: rgba(245,245,247,0.7);
+  margin-bottom: 40px;
+
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.7s 0.12s, transform 0.7s 0.12s;
+}
+.cta-section.visible .cta-sub { opacity: 1; transform: translateY(0); }
+
+.cta-btn-wrap {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.7s 0.24s, transform 0.7s 0.24s;
+}
+.cta-section.visible .cta-btn-wrap { opacity: 1; transform: translateY(0); }
+
+.btn-cta-primary {
+  background: var(--apple-blue);
+  color: #fff;
+  padding: 14px 28px;
+  border-radius: 980px;
+  text-decoration: none;
+  font-size: 17px;
+  font-weight: 400;
+  transition: background 0.2s, transform 0.18s;
+}
+.btn-cta-primary:hover { background: var(--apple-blue-hover); transform: scale(1.04); }
+
+.btn-cta-secondary {
+  color: var(--apple-blue);
+  padding: 14px 28px;
+  border-radius: 980px;
+  text-decoration: none;
+  font-size: 17px;
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: border-color 0.2s, transform 0.18s;
+}
+.btn-cta-secondary:hover { border-color: rgba(255,255,255,0.5); transform: scale(1.04); }
+
+/* ─── FOOTER ─────────────────────────────────────────────────────────── */
+footer {
+  background: var(--apple-bg);
+  padding: 40px 20px;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.footer-inner {
+  max-width: 980px;
+  margin: 0 auto;
+  font-size: 12px;
+  color: var(--apple-grey);
+  line-height: 1.8;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 16px;
+  margin-bottom: 8px;
+  list-style: none;
+}
+
+.footer-links a {
+  color: var(--apple-grey);
+  text-decoration: none;
+  font-size: 12px;
+}
+.footer-links a:hover { color: var(--apple-black); }
+
+/* ─── SCROLL PARTICLE CANVAS ─────────────────────────────────────────── */
+#particle-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.25;
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .tile-grid, .promo-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .tile { min-height: 420px; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Subtle particle canvas -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- ═══ NAV ═══════════════════════════════════════════════════════════ -->
+<nav id="main-nav">
+  <div class="nav-inner">
+    <!-- Apple Logo SVG -->
+    <a href="#" class="nav-logo" aria-label="Apple">
+      <svg height="18" viewBox="0 0 14 44" width="14" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+        <path d="m13.0729 17.6825a3.61 3.61 0 0 0 -1.7248 3.0365 3.5132 3.5132 0 0 0 2.1379 3.2223 8.394 8.394 0 0 1 -1.0948 2.2618c-.6816.9812-1.3943 1.9623-2.4787 1.9623s-1.3633-.63-2.613-.63c-1.2187 0-1.6525.6507-2.644.6507s-1.6834-.9089-2.4787-2.0243a9.7842 9.7842 0 0 1 -1.6628-5.2776c0-3.0984 2.014-4.7405 3.9969-4.7405 1.0535 0 1.9314.6919 2.5924.6919.63 0 1.6112-.7333 2.8092-.7333a3.7579 3.7579 0 0 1 3.1604 1.5802zm-3.7284-2.8918a3.5615 3.5615 0 0 0 .8469-2.22 1.5353 1.5353 0 0 0 -.031-.32 3.5686 3.5686 0 0 0 -2.3445 1.2084 3.4629 3.4629 0 0 0 -.8779 2.1585 1.419 1.419 0 0 0 .031.2892 1.19 1.19 0 0 0 .2169.0207 3.0935 3.0935 0 0 0 2.1586-1.1368z"/>
+      </svg>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#" class="nav-link">Store</a></li>
+      <li><a href="#" class="nav-link">Mac</a></li>
+      <li><a href="#" class="nav-link">iPad</a></li>
+      <li><a href="#" class="nav-link">iPhone</a></li>
+      <li><a href="#" class="nav-link">Watch</a></li>
+      <li><a href="#" class="nav-link">Vision</a></li>
+      <li><a href="#" class="nav-link">AirPods</a></li>
+      <li><a href="#" class="nav-link">TV &amp; Home</a></li>
+      <li><a href="#" class="nav-link">Entertainment</a></li>
+      <li><a href="#" class="nav-link">Accessories</a></li>
+      <li><a href="#" class="nav-link">Support</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <!-- Search icon -->
+      <svg class="nav-icon" width="15" height="15" viewBox="0 0 15 44" fill="currentColor">
+        <path d="M14.298,27.202l-3.87-3.87c0.701-0.929,1.122-2.081,1.122-3.332c0-3.06-2.489-5.55-5.55-5.55c-3.06,0-5.55,2.49-5.55,5.55c0,3.061,2.49,5.55,5.55,5.55c1.251,0,2.403-0.421,3.332-1.122l3.87,3.87c0.151,0.151,0.35,0.228,0.548,0.228s0.396-0.076,0.548-0.228C14.601,27.995,14.601,27.505,14.298,27.202z M1.55,20c0-2.454,1.997-4.45,4.45-4.45c2.454,0,4.45,1.997,4.45,4.45S8.454,24.45,6,24.45C3.546,24.45,1.55,22.454,1.55,20z"/>
+      </svg>
+      <!-- Bag icon -->
+      <svg class="nav-icon" width="14" height="14" viewBox="0 0 14 44" fill="currentColor">
+        <path d="m11.3535 16.0283h-1.0205a3.4229 3.4229 0 0 0 -3.333-2.9648 3.4229 3.4229 0 0 0 -3.333 2.9648h-1.02a2.1184 2.1184 0 0 0 -2.117 2.1162v7.7155a2.1186 2.1186 0 0 0 2.1162 2.1167h8.707a2.1186 2.1186 0 0 0 2.1168-2.1167v-7.7155a2.1184 2.1184 0 0 0 -2.1165-2.1162zm-4.3535-1.8652a2.3169 2.3169 0 0 1 2.2222 1.8652h-4.4444a2.3169 2.3169 0 0 1 2.2222-1.8652zm5.37 11.6969a1.0182 1.0182 0 0 1 -1.0166 1.0171h-8.7069a1.0182 1.0182 0 0 1 -1.0165-1.0171v-7.7155a1.0178 1.0178 0 0 1 1.0166-1.0166h8.707a1.0178 1.0178 0 0 1 1.0164 1.0166z"/>
+      </svg>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ════════════════════════════════════════════════════════════ -->
+<main style="padding-top: var(--nav-height);">
+
+  <!-- Featured hero: iPhone Family (full width) -->
+  <div style="padding: 8px 8px 0;">
+    <div class="tile tile-hero" style="min-height:640px; align-items:center; justify-content:center;">
+      <div class="tile-eyebrow">New</div>
+      <h1 class="tile-headline" style="color:#f5f5f7; font-size:clamp(40px,8vw,80px);">iPhone</h1>
+      <p class="tile-subhead" style="color:rgba(245,245,247,0.7); max-width:400px;">Meet the latest iPhone lineup.</p>
+      <div class="tile-ctas">
+        <a href="#" class="btn btn-primary">Learn more</a>
+        <a href="#" class="btn btn-secondary">Shop iPhone</a>
+      </div>
+      <div class="tile-image-wrap" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
+        <!-- Animated rings behind product -->
+        <div style="position:absolute;bottom:-60px;left:50%;transform:translateX(-50%);width:500px;height:500px;border-radius:50%;border:1px solid rgba(0,122,255,0.15);animation:pulse-ring 4s ease-in-out infinite;"></div>
+        <div style="position:absolute;bottom:-80px;left:50%;transform:translateX(-50%);width:700px;height:700px;border-radius:50%;border:1px solid rgba(0,122,255,0.08);animation:pulse-ring 4s ease-in-out 1s infinite;"></div>
+      </div>
+      <span class="product-emoji" style="position:absolute;bottom:40px;font-size:clamp(120px,20vw,200px);">📱</span>
+    </div>
+  </div>
+
+  <!-- 2-column product grid -->
+  <div class="tile-grid">
+
+    <!-- MacBook Neo -->
+    <div class="tile">
+      <div class="tile-eyebrow">New</div>
+      <h2 class="tile-headline">MacBook Neo</h2>
+      <p class="tile-subhead">Amazing Mac. Surprising price.</p>
+      <div class="tile-ctas">
+        <a href="#" class="btn btn-primary">Learn more</a>
+        <a href="#" class="btn btn-secondary">Buy</a>
+      </div>
+      <div class="tile-image-wrap">
+        <div class="glow-ring" style="background:radial-gradient(ellipse, rgba(255,214,0,0.2) 0%, transparent 70%);"></div>
+        <span class="product-emoji">💻</span>
+      </div>
+    </div>
+
+    <!-- iPad Air -->
+    <div class="tile" style="background:#e8f0fe;">
+      <div class="tile-eyebrow" style="color:#5856d6;">M4 chip</div>
+      <h2 class="tile-headline">iPad Air</h2>
+      <p class="tile-subhead">Now supercharged by M4.</p>
+      <div class="tile-ctas">
+        <a href="#" class="btn btn-primary">Learn more</a>
+        <a href="#" class="btn btn-secondary">Buy</a>
+      </div>
+      <div class="tile-image-wrap">
+        <div class="glow-ring" style="background:radial-gradient(ellipse, rgba(88,86,214,0.2) 0%, transparent 70%);"></div>
+        <span class="product-emoji">📲</span>
+      </div>
+    </div>
+
+    <!-- Apple Watch Series 11 -->
+    <div class="tile theme-dark">
+      <div class="tile-eyebrow" style="color:#30d158;">Series 11</div>
+      <h2 class="tile-headline">Apple Watch</h2>
+      <p class="tile-subhead">The ultimate way to watch your health.</p>
+      <div class="tile-ctas">
+        <a href="#" class="btn btn-primary">Learn more</a>
+        <a href="#" class="btn btn-secondary">Buy</a>
+      </div>
+      <div class="tile-image-wrap">
+        <div class="glow-ring" style="background:radial-gradient(ellipse, rgba(48,209,88,0.25) 0%, transparent 70%);"></div>
+        <span class="product-emoji">⌚</span>
+      </div>
+    </div>
+
+    <!-- MacBook Pro -->
+    <div class="tile theme-dark">
+      <div class="tile-eyebrow" style="color:#ff9f0a;">M5 chip</div>
+      <h2 class="tile-headline">MacBook Pro</h2>
+      <p class="tile-subhead">Now with M5, M5 Pro, and M5 Max.</p>
+      <div class="tile-ctas">
+        <a href="#" class="btn btn-primary">Learn more</a>
+        <a href="#" class="btn btn-secondary">Buy</a>
+      </div>
+      <div class="tile-image-wrap">
+        <div class="glow-ring" style="background:radial-gradient(ellipse, rgba(255,159,10,0.2) 0%, transparent 70%);"></div>
+        <span class="product-emoji">🖥️</span>
+      </div>
+    </div>
+
+    <!-- AirPods Pro 3 -->
+    <div class="tile">
+      <div class="tile-eyebrow">AirPods Pro 3</div>
+      <h2 class="tile-headline">World's best ANC.</h2>
+      <p class="tile-subhead">The world's best in-ear Active Noise Cancellation.</p>
+      <div class="tile-ctas">
+        <a href="#" class="btn btn-primary">Learn more</a>
+        <a href="#" class="btn btn-secondary">Buy</a>
+      </div>
+      <div class="tile-image-wrap">
+        <div class="glow-ring" style="background:radial-gradient(ellipse, rgba(0,122,255,0.15) 0%, transparent 70%);"></div>
+        <span class="product-emoji">🎧</span>
+      </div>
+    </div>
+
+    <!-- Apple Vision Pro -->
+    <div class="tile" style="background:linear-gradient(135deg,#1c1c1e,#3a3a3c);">
+      <div class="tile-eyebrow" style="color:#bf5af2;">Spatial Computing</div>
+      <h2 class="tile-headline" style="color:#f5f5f7;">Apple Vision Pro</h2>
+      <p class="tile-subhead" style="color:rgba(245,245,247,0.7);">Welcome to the era of spatial computing.</p>
+      <div class="tile-ctas">
+        <a href="#" class="btn btn-primary">Learn more</a>
+        <a href="#" class="btn btn-secondary">Buy</a>
+      </div>
+      <div class="tile-image-wrap">
+        <div class="glow-ring" style="background:radial-gradient(ellipse, rgba(191,90,242,0.3) 0%, transparent 70%);"></div>
+        <span class="product-emoji">🥽</span>
+      </div>
+    </div>
+
+  </div><!-- /tile-grid -->
+
+</main>
+
+<!-- ═══ MARQUEE ═════════════════════════════════════════════════════════ -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <!-- doubled for seamless loop -->
+    <span class="marquee-item"><span class="marquee-dot"></span>iPhone</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>MacBook Pro</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>iPad Air</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Apple Watch</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>AirPods Pro</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Apple Vision Pro</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Apple TV+</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Apple Music</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Apple Arcade</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Apple Fitness+</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>iPhone</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>MacBook Pro</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>iPad Air</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Apple Watch</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>AirPods Pro</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Apple Vision Pro</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Apple TV+</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Apple Music</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Apple Arcade</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Apple Fitness+</span>
+  </div>
+</div>
+
+<!-- ═══ STATS ═══════════════════════════════════════════════════════════ -->
+<section class="stats-section">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-number" data-target="2.3">0</div>
+      <div class="stat-label">Billion active devices worldwide</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" data-target="47">0</div>
+      <div class="stat-label">Years of changing the world</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" data-target="175">0</div>
+      <div class="stat-label">Countries with Apple products</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" data-target="100">0</div>
+      <div class="stat-label">Renewable energy for operations</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA SECTION ════════════════════════════════════════════════════ -->
+<section class="cta-section">
+  <div class="cta-content">
+    <h2 class="cta-headline">Get more from Apple.</h2>
+    <p class="cta-sub">Subscribe to Apple One and get Apple TV+, Apple Music, Apple Arcade, Apple Fitness+, and more.</p>
+    <div class="cta-btn-wrap">
+      <a href="#" class="btn-cta-primary">Explore Apple One</a>
+      <a href="#" class="btn-cta-secondary">Find a Store near you</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ══════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <p style="margin-bottom:16px;">More ways to shop: <a href="#" style="color:var(--apple-blue);text-decoration:none;">Find an Apple Store</a> or <a href="#" style="color:var(--apple-blue);text-decoration:none;">other retailer</a> near you. Or call 1-800-MY-APPLE.</p>
+    <ul class="footer-links">
+      <li><a href="#">Privacy Policy</a></li>
+      <li><a href="#">Terms of Use</a></li>
+      <li><a href="#">Sales and Refunds</a></li>
+      <li><a href="#">Legal</a></li>
+      <li><a href="#">Site Map</a></li>
+    </ul>
+    <p>Copyright &copy; 2026 Apple Inc. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- ═══ CSS-only @keyframes for pulse ring ════════════════════════════ -->
+<style>
+@keyframes pulse-ring {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+  50%       { transform: translateX(-50%) scale(1.1); opacity: 1; }
+}
+</style>
+
+<script>
+/* ─── NAV: dark on dark-bg sections ─────────────────────────────────── */
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  if (y < 60) { nav.classList.remove('dark'); return; }
+  // Check if we're over a dark tile by sampling the element under nav center
+  const el = document.elementFromPoint(window.innerWidth / 2, 60);
+  const dark = el?.closest('.theme-dark, .tile-hero');
+  nav.classList.toggle('dark', !!dark);
+}, { passive: true });
+
+/* ─── INTERSECTION OBSERVER: scroll-reveal ───────────────────────────── */
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.tile, .stat-item, .cta-section').forEach(el => {
+  revealObs.observe(el);
+});
+
+/* ─── STAT COUNTERS ──────────────────────────────────────────────────── */
+const counterObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const target = parseFloat(el.dataset.target);
+    const isFloat = target % 1 !== 0;
+    const duration = 1600;
+    const start = performance.now();
+
+    function tick(now) {
+      const t = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      const val = target * ease;
+      el.textContent = isFloat
+        ? val.toFixed(1) + 'B'
+        : Math.round(val) + (target === 100 ? '%' : '+');
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    counterObs.unobserve(el);
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+  counterObs.observe(el);
+});
+
+/* ─── PARTICLE CANVAS ────────────────────────────────────────────────── */
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+for (let i = 0; i < 60; i++) {
+  particles.push({
+    x: Math.random() * 2000,
+    y: Math.random() * 2000,
+    r: Math.random() * 2 + 0.5,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.3,
+    opacity: Math.random() * 0.4 + 0.1
+  });
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, W, H);
+  const scrollY = window.scrollY;
+
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < 0) p.x = W;
+    if (p.x > W) p.x = 0;
+    if (p.y < -scrollY) p.y = H + scrollY;
+    if (p.y > H + scrollY) p.y = -scrollY;
+
+    const sy = p.y - scrollY;
+    if (sy < -10 || sy > H + 10) return;
+
+    ctx.beginPath();
+    ctx.arc(p.x, sy, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0, 122, 255, ${p.opacity})`;
+    ctx.fill();
+  });
+
+  requestAnimationFrame(drawParticles);
+}
+requestAnimationFrame(drawParticles);
+</script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Asset Generator</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, sans-serif; background: #111; color: #eee; display: flex; height: 100vh; overflow: hidden; }
+  #canvas-panel { flex: 1; position: relative; }
+  canvas { display: block; width: 100% !important; height: 100% !important; }
+  #controls-panel {
+    width: 300px; background: #1a1a1a; border-left: 1px solid #333;
+    padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;
+  }
+  h1 { font-size: 16px; font-weight: 600; color: #fff; border-bottom: 1px solid #333; padding-bottom: 10px; }
+  .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 6px; }
+  .shape-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .shape-btn {
+    background: #2a2a2a; border: 1px solid #444; color: #ccc;
+    padding: 8px 4px; border-radius: 6px; cursor: pointer; font-size: 12px; text-align: center;
+    transition: all 0.2s;
+  }
+  .shape-btn:hover { background: #3a3a3a; border-color: #666; }
+  .shape-btn.active { background: #4f46e5; border-color: #6366f1; color: #fff; }
+  .control-row { display: flex; flex-direction: column; gap: 6px; }
+  .control-row label { font-size: 12px; color: #aaa; display: flex; justify-content: space-between; }
+  .control-row label span { color: #fff; }
+  input[type="range"] { width: 100%; accent-color: #6366f1; }
+  input[type="color"] { width: 100%; height: 36px; border: 1px solid #444; border-radius: 6px; background: none; cursor: pointer; padding: 2px; }
+  .generate-btn {
+    background: #4f46e5; color: #fff; border: none; padding: 12px;
+    border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600;
+    transition: background 0.2s; margin-top: auto;
+  }
+  .generate-btn:hover { background: #4338ca; }
+  select {
+    width: 100%; background: #2a2a2a; border: 1px solid #444; color: #eee;
+    padding: 8px; border-radius: 6px; font-size: 13px;
+  }
+  @media (max-width: 700px) {
+    body { flex-direction: column; }
+    #canvas-panel { flex: none; height: 50vh; }
+    #controls-panel { width: 100%; flex-direction: row; flex-wrap: wrap; overflow-y: auto; }
+  }
+</style>
+</head>
+<body>
+<div id="canvas-panel"><canvas id="c"></canvas></div>
+<div id="controls-panel">
+  <h1>3D Asset Generator</h1>
+
+  <div>
+    <div class="section-label">Shape</div>
+    <div class="shape-grid">
+      <button class="shape-btn active" data-shape="box">Cube</button>
+      <button class="shape-btn" data-shape="sphere">Sphere</button>
+      <button class="shape-btn" data-shape="torus">Torus</button>
+      <button class="shape-btn" data-shape="cylinder">Cylinder</button>
+      <button class="shape-btn" data-shape="cone">Cone</button>
+      <button class="shape-btn" data-shape="octahedron">Octa</button>
+    </div>
+  </div>
+
+  <div class="control-row">
+    <label>Color</label>
+    <input type="color" id="color-picker" value="#6366f1">
+  </div>
+
+  <div class="control-row">
+    <label>Size <span id="size-val">1.0</span></label>
+    <input type="range" id="size" min="0.3" max="2.5" step="0.1" value="1.0">
+  </div>
+
+  <div class="control-row">
+    <label>Segments <span id="seg-val">32</span></label>
+    <input type="range" id="segments" min="3" max="64" step="1" value="32">
+  </div>
+
+  <div class="control-row">
+    <label>Metalness <span id="metal-val">0.3</span></label>
+    <input type="range" id="metalness" min="0" max="1" step="0.05" value="0.3">
+  </div>
+
+  <div class="control-row">
+    <label>Roughness <span id="rough-val">0.4</span></label>
+    <input type="range" id="roughness" min="0" max="1" step="0.05" value="0.4">
+  </div>
+
+  <div class="control-row">
+    <label>Material</label>
+    <select id="material-type">
+      <option value="standard">Shaded</option>
+      <option value="wireframe">Wireframe</option>
+      <option value="flat">Flat</option>
+    </select>
+  </div>
+
+  <button class="generate-btn" id="generate-btn">Generate Shape</button>
+</div>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const canvas = document.getElementById('c');
+const panel = document.getElementById('canvas-panel');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(devicePixelRatio);
+renderer.shadowMap.enabled = true;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x111111);
+scene.fog = new THREE.Fog(0x111111, 10, 40);
+
+const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
+camera.position.set(0, 1.5, 4);
+
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+const dir = new THREE.DirectionalLight(0xffffff, 1.5);
+dir.position.set(5, 8, 5);
+dir.castShadow = true;
+scene.add(dir);
+scene.add(new THREE.HemisphereLight(0x8888ff, 0x444400, 0.4));
+
+const grid = new THREE.GridHelper(20, 20, 0x333333, 0x222222);
+scene.add(grid);
+
+let mesh = null;
+let currentShape = 'box';
+let params = { color: '#6366f1', size: 1.0, segments: 32, metalness: 0.3, roughness: 0.4, wireframe: false, flat: false };
+
+function buildGeometry() {
+  const s = params.segments;
+  switch (currentShape) {
+    case 'box':         return new THREE.BoxGeometry(1, 1, 1, Math.floor(s/8), Math.floor(s/8), Math.floor(s/8));
+    case 'sphere':      return new THREE.SphereGeometry(0.7, s, s);
+    case 'torus':       return new THREE.TorusGeometry(0.6, 0.25, Math.max(8,Math.floor(s/4)), s);
+    case 'cylinder':    return new THREE.CylinderGeometry(0.5, 0.5, 1.2, s);
+    case 'cone':        return new THREE.ConeGeometry(0.6, 1.4, s);
+    case 'octahedron':  return new THREE.OctahedronGeometry(0.7, Math.floor(s/16));
+    default:            return new THREE.BoxGeometry(1,1,1);
+  }
+}
+
+function generate() {
+  if (mesh) { scene.remove(mesh); mesh.geometry.dispose(); mesh.material.dispose(); }
+  const geo = buildGeometry();
+  const matOpts = { color: new THREE.Color(params.color), metalness: params.metalness, roughness: params.roughness };
+  let mat;
+  if (params.flat) { mat = new THREE.MeshStandardMaterial({ ...matOpts, flatShading: true }); }
+  else if (params.wireframe) { mat = new THREE.MeshBasicMaterial({ color: new THREE.Color(params.color), wireframe: true }); }
+  else { mat = new THREE.MeshStandardMaterial(matOpts); }
+  mesh = new THREE.Mesh(geo, mat);
+  mesh.scale.setScalar(params.size);
+  mesh.castShadow = true;
+  scene.add(mesh);
+}
+
+generate();
+
+// Controls wiring
+document.querySelectorAll('.shape-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentShape = btn.dataset.shape;
+  });
+});
+document.getElementById('color-picker').addEventListener('input', e => { params.color = e.target.value; if (mesh) mesh.material.color.set(params.color); });
+document.getElementById('size').addEventListener('input', e => { params.size = +e.target.value; document.getElementById('size-val').textContent = params.size.toFixed(1); if (mesh) mesh.scale.setScalar(params.size); });
+document.getElementById('segments').addEventListener('input', e => { params.segments = +e.target.value; document.getElementById('seg-val').textContent = params.segments; });
+document.getElementById('metalness').addEventListener('input', e => { params.metalness = +e.target.value; document.getElementById('metal-val').textContent = params.metalness.toFixed(2); if (mesh && mesh.material.metalness !== undefined) mesh.material.metalness = params.metalness; });
+document.getElementById('roughness').addEventListener('input', e => { params.roughness = +e.target.value; document.getElementById('rough-val').textContent = params.roughness.toFixed(2); if (mesh && mesh.material.roughness !== undefined) mesh.material.roughness = params.roughness; });
+document.getElementById('material-type').addEventListener('change', e => { params.wireframe = e.target.value === 'wireframe'; params.flat = e.target.value === 'flat'; });
+document.getElementById('generate-btn').addEventListener('click', generate);
+
+function resize() {
+  const w = panel.clientWidth, h = panel.clientHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(panel);
+resize();
+
+(function animate() {
+  requestAnimationFrame(animate);
+  if (mesh) mesh.rotation.y += 0.005;
+  controls.update();
+  renderer.render(scene, camera);
+})();
+</script>
+</body>
+</html>

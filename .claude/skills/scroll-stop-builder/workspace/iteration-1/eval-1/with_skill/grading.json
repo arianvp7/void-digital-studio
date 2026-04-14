@@ -1,0 +1,12 @@
+{"eval_id":1,"configuration":"with_skill","expectations":[
+  {"text":"Hero contains an animated visual specific to focus/blocking (tabs being X'd out, timer animation)","passed":true,"evidence":"6 .tab elements with @keyframes tabblock animation fading out; timer-box with live JS countdown and progress-fill animation"},
+  {"text":"Page uses dark background (#0d0d0d or similar)","passed":true,"evidence":"body background:#0d0d0d"},
+  {"text":"Uses cyan or blue accent color appropriate for tech/SaaS","passed":true,"evidence":"#06b6d4 cyan accent throughout — nav CTA, buttons, stat numbers, timer border"},
+  {"text":"Hero headline is 10 words or fewer","passed":true,"evidence":"'Stop Doom-Scrolling. Start Shipping.' = 5 words"},
+  {"text":"Headline avoids 'world-class', 'innovative', 'seamless', 'powerful'","passed":true,"evidence":"No generic phrases; headline is punchy and audience-specific ('doom-scrolling' is exact pain language)"},
+  {"text":"Stats section with at least 3 social proof numbers","passed":true,"evidence":"4 stats: 2.4hrs, 47,000, 94%, 7min"},
+  {"text":"Feature grid with at least 4 cards","passed":true,"evidence":"6 feature cards present"},
+  {"text":"Final CTA with email input and button","passed":true,"evidence":"cta-section with email input and 'Start My Free Trial' button"},
+  {"text":"A countdown/focus timer is present and animated or functional","passed":true,"evidence":"Live JS countdown timer (setInterval decrementing from 25:00) plus CSS progress bar animation"},
+  {"text":"Page contains CSS @keyframes animations","passed":true,"evidence":"@keyframes tabblock, progress defined; tab blocking and progress bar animated"}
+]}

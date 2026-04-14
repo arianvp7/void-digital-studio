@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Morning Knead - Portland Sourdough Bakery</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:#faf7f2;color:#1a1208}
+header{background:#1a0f05;padding:16px 40px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:#f59e0b}
+nav a{margin-left:24px;text-decoration:none;color:#ccc;font-size:14px;font-weight:500}
+.order-btn{background:#f59e0b;color:#000;border:none;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-left:24px}
+.hero{background:#1a0f05;color:#fff;padding:80px 40px;text-align:center}
+.hero-icon{font-size:80px;margin-bottom:24px}
+.hero h1{font-family:'Playfair Display',serif;font-size:52px;font-weight:900;margin-bottom:16px;line-height:1.1;color:#f5deb3}
+.hero p{font-size:18px;color:#a8916a;max-width:540px;margin:0 auto 32px;line-height:1.6}
+.hero-cta{background:#f59e0b;color:#000;border:none;padding:16px 32px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-right:12px}
+.hero-sec{background:transparent;color:#f5deb3;border:2px solid #a8916a;padding:16px 32px;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer}
+.stats{display:flex;justify-content:center;gap:64px;padding:48px 40px;background:#fff;border-bottom:1px solid #e8dcc8;text-align:center}
+.stat h3{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:#92400e}
+.stat p{font-size:13px;color:#888;margin-top:4px}
+.products{padding:80px 40px;max-width:1000px;margin:0 auto}
+.products h2{font-family:'Playfair Display',serif;font-size:36px;font-weight:800;text-align:center;margin-bottom:8px}
+.products p.sub{text-align:center;color:#888;margin-bottom:48px;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.card{background:#fff;border-radius:12px;padding:28px;border:1px solid #e8dcc8;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.card span{font-size:32px}.card h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin:12px 0 8px}.card p{font-size:14px;color:#666;line-height:1.6}
+.delivery{background:#1a0f05;color:#fff;text-align:center;padding:80px 40px}
+.delivery h2{font-family:'Playfair Display',serif;font-size:36px;font-weight:800;margin-bottom:16px;color:#f5deb3}
+.delivery p{font-size:16px;color:#a8916a;margin-bottom:32px}
+.delivery input{padding:14px 18px;border-radius:8px;border:none;font-size:15px;width:260px;margin-right:12px}
+.delivery button{background:#f59e0b;color:#000;border:none;padding:14px 28px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer}
+footer{text-align:center;padding:24px;background:#1a0f05;font-size:13px;color:#666}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">The Morning Knead</div>
+  <div><a href="#">Breads</a><a href="#">Pastries</a><a href="#">Delivery</a><a href="#">Our Story</a><button class="order-btn">Order Now</button></div>
+</header>
+<section class="hero">
+  <div class="hero-icon">🍞</div>
+  <h1>Portland's Sourdough,<br>Delivered Fresh.</h1>
+  <p>Everything sourdough — loaves, croissants, pizza dough — baked from scratch daily and delivered to your door while it's still warm.</p>
+  <button class="hero-cta">Order Today's Bake</button>
+  <button class="hero-sec">See What's Fresh</button>
+</section>
+<div class="stats">
+  <div class="stat"><h3>6am</h3><p>First bake every morning</p></div>
+  <div class="stat"><h3>72hr</h3><p>Cold fermentation on every loaf</p></div>
+  <div class="stat"><h3>12+</h3><p>Varieties weekly</p></div>
+  <div class="stat"><h3>PDX</h3><p>Local delivery only</p></div>
+</div>
+<section class="products">
+  <h2>This Week's Bakes</h2>
+  <p class="sub">Made from scratch. Every single day.</p>
+  <div class="grid">
+    <div class="card"><span>🫓</span><h3>Country Sourdough</h3><p>Our signature 72-hour cold ferment loaf. Open crumb, crackling crust, Pacific Northwest wheat.</p></div>
+    <div class="card"><span>🥐</span><h3>Sourdough Croissants</h3><p>96 layers of butter. Three days to make. They sell out by 9am — order ahead.</p></div>
+    <div class="card"><span>🍕</span><h3>Pizza Dough Kits</h3><p>48-hour fermented dough balls for two 12" pizzas. Stretches beautifully.</p></div>
+    <div class="card"><span>🥖</span><h3>Seeded Baguettes</h3><p>Sesame, poppy, and sunflower seed crust. Stone deck oven baked.</p></div>
+    <div class="card"><span>🧁</span><h3>Sourdough Muffins</h3><p>Banana walnut, blueberry lemon, double chocolate. Discard never tasted this good.</p></div>
+    <div class="card"><span>🎂</span><h3>Custom Orders</h3><p>Birthday cakes, celebration loaves. Email us 72 hours out.</p></div>
+  </div>
+</section>
+<section class="delivery">
+  <h2>Order by 8pm for tomorrow morning.</h2>
+  <p>Fresh sourdough delivered across Portland before 10am.</p>
+  <input type="email" placeholder="your@email.com">
+  <button>Order Now</button>
+</section>
+<footer>© 2026 The Morning Knead · Portland, OR · Baked fresh daily</footer>
+</body>
+</html>

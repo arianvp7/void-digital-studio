@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Geometry Generator</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f0f0f;
+      color: #e0e0e0;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── Left Panel ── */
+    #canvas-panel {
+      flex: 1 1 60%;
+      position: relative;
+      background: #0a0a12;
+      min-width: 0;
+    }
+
+    #canvas-panel canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    #canvas-label {
+      position: absolute;
+      top: 14px;
+      left: 18px;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #5566ff;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* ── Right Panel ── */
+    #controls-panel {
+      flex: 0 0 320px;
+      background: #1a1a2e;
+      border-left: 1px solid #2a2a4a;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    #controls-panel::-webkit-scrollbar { width: 6px; }
+    #controls-panel::-webkit-scrollbar-track { background: #1a1a2e; }
+    #controls-panel::-webkit-scrollbar-thumb { background: #3a3a6a; border-radius: 3px; }
+
+    .panel-header {
+      padding: 22px 24px 16px;
+      border-bottom: 1px solid #2a2a4a;
+    }
+
+    .panel-header h1 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #c0c8ff;
+      letter-spacing: 0.5px;
+    }
+
+    .panel-header p {
+      font-size: 12px;
+      color: #6670a0;
+      margin-top: 4px;
+    }
+
+    .section {
+      padding: 20px 24px;
+      border-bottom: 1px solid #22223a;
+    }
+
+    .section-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #5566bb;
+      margin-bottom: 14px;
+    }
+
+    /* Shape picker */
+    .shape-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .shape-btn {
+      background: #12122a;
+      border: 1px solid #2a2a4a;
+      color: #a0a8d0;
+      padding: 10px 6px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      text-align: center;
+      transition: all 0.18s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .shape-btn svg {
+      width: 28px;
+      height: 28px;
+      opacity: 0.75;
+      transition: opacity 0.18s;
+    }
+
+    .shape-btn:hover {
+      border-color: #5566ff;
+      color: #c0c8ff;
+      background: #1e1e40;
+    }
+
+    .shape-btn:hover svg { opacity: 1; }
+
+    .shape-btn.active {
+      border-color: #5566ff;
+      background: #1e1e50;
+      color: #c0c8ff;
+      box-shadow: 0 0 12px #5566ff44;
+    }
+
+    .shape-btn.active svg { opacity: 1; }
+
+    /* Sliders */
+    .control-row {
+      margin-bottom: 16px;
+    }
+
+    .control-row:last-child { margin-bottom: 0; }
+
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .control-label span {
+      font-size: 12px;
+      color: #9090c0;
+    }
+
+    .control-label .value {
+      font-size: 12px;
+      font-weight: 600;
+      color: #c0c8ff;
+      min-width: 36px;
+      text-align: right;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: #2a2a4a;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #5566ff;
+      cursor: pointer;
+      box-shadow: 0 0 6px #5566ff88;
+      transition: box-shadow 0.15s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      box-shadow: 0 0 10px #5566ffcc;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #5566ff;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 6px #5566ff88;
+    }
+
+    /* Color pickers */
+    .color-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .color-row:last-child { margin-bottom: 0; }
+
+    .color-row label {
+      font-size: 12px;
+      color: #9090c0;
+      flex: 1;
+    }
+
+    .color-swatch {
+      width: 36px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid #3a3a6a;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .color-swatch input[type="color"] {
+      position: absolute;
+      inset: -4px;
+      width: calc(100% + 8px);
+      height: calc(100% + 8px);
+      border: none;
+      cursor: pointer;
+      opacity: 0;
+    }
+
+    .color-preview {
+      width: 100%;
+      height: 100%;
+      border-radius: 5px;
+      pointer-events: none;
+    }
+
+    /* Toggles */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .toggle-row:last-child { margin-bottom: 0; }
+
+    .toggle-row label {
+      font-size: 12px;
+      color: #9090c0;
+    }
+
+    .toggle {
+      width: 36px;
+      height: 20px;
+      background: #2a2a4a;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle.on { background: #5566ff; }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.2s;
+    }
+
+    .toggle.on::after { transform: translateX(16px); }
+
+    /* Generate button */
+    #generate-btn {
+      margin: 20px 24px;
+      padding: 13px;
+      background: linear-gradient(135deg, #5566ff, #7744dd);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: opacity 0.18s, transform 0.12s;
+      box-shadow: 0 4px 18px #5566ff44;
+    }
+
+    #generate-btn:hover { opacity: 0.9; }
+    #generate-btn:active { transform: scale(0.97); }
+
+    /* Metadata */
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .meta-card {
+      background: #12122a;
+      border: 1px solid #22224a;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .meta-card .meta-label {
+      font-size: 10px;
+      color: #5566aa;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .meta-card .meta-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: #c0c8ff;
+    }
+
+    /* Responsive stacking */
+    @media (max-width: 680px) {
+      body { flex-direction: column; }
+      #canvas-panel { flex: 0 0 55vh; }
+      #controls-panel { flex: 1; border-left: none; border-top: 1px solid #2a2a4a; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── LEFT: 3D Canvas ── -->
+<div id="canvas-panel">
+  <div id="canvas-label">3D VIEWPORT · ORBIT TO ROTATE</div>
+</div>
+
+<!-- ── RIGHT: Controls ── -->
+<div id="controls-panel">
+  <div class="panel-header">
+    <h1>3D Geometry Generator</h1>
+    <p>Generate and customize 3D geometric shapes in real time.</p>
+  </div>
+
+  <!-- Shape selector -->
+  <div class="section">
+    <div class="section-title">Shape</div>
+    <div class="shape-grid">
+      <button class="shape-btn active" data-shape="box">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="8" y="8" width="16" height="16" rx="1"/>
+          <line x1="8" y1="8" x2="4" y2="4"/>
+          <line x1="24" y1="8" x2="28" y2="4"/>
+          <line x1="24" y1="24" x2="28" y2="28"/>
+          <line x1="8" y1="24" x2="4" y2="28"/>
+          <rect x="4" y="4" width="16" height="16" rx="1" opacity="0.4"/>
+        </svg>
+        Cube
+      </button>
+      <button class="shape-btn" data-shape="sphere">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="16" cy="16" r="11"/>
+          <ellipse cx="16" cy="16" rx="6" ry="11"/>
+          <line x1="5" y1="16" x2="27" y2="16" opacity="0.5"/>
+        </svg>
+        Sphere
+      </button>
+      <button class="shape-btn" data-shape="torus">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8">
+          <ellipse cx="16" cy="16" rx="11" ry="5"/>
+          <ellipse cx="16" cy="16" rx="6" ry="2.5" opacity="0.5"/>
+        </svg>
+        Torus
+      </button>
+      <button class="shape-btn" data-shape="cylinder">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8">
+          <ellipse cx="16" cy="9" rx="10" ry="4"/>
+          <line x1="6" y1="9" x2="6" y2="23"/>
+          <line x1="26" y1="9" x2="26" y2="23"/>
+          <ellipse cx="16" cy="23" rx="10" ry="4"/>
+        </svg>
+        Cylinder
+      </button>
+      <button class="shape-btn" data-shape="cone">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8">
+          <ellipse cx="16" cy="24" rx="10" ry="4"/>
+          <line x1="6" y1="24" x2="16" y2="7"/>
+          <line x1="26" y1="24" x2="16" y2="7"/>
+        </svg>
+        Cone
+      </button>
+      <button class="shape-btn" data-shape="octahedron">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8">
+          <polygon points="16,4 28,16 16,28 4,16"/>
+          <line x1="16" y1="4" x2="16" y2="28" opacity="0.4"/>
+          <line x1="4" y1="16" x2="28" y2="16" opacity="0.4"/>
+        </svg>
+        Octa
+      </button>
+    </div>
+  </div>
+
+  <!-- Size controls -->
+  <div class="section">
+    <div class="section-title">Size</div>
+    <div class="control-row">
+      <div class="control-label">
+        <span>Scale</span>
+        <span class="value" id="scale-val">1.0</span>
+      </div>
+      <input type="range" id="scale" min="0.2" max="3.0" step="0.05" value="1.0" />
+    </div>
+    <div class="control-row">
+      <div class="control-label">
+        <span>Detail / Segments</span>
+        <span class="value" id="segments-val">32</span>
+      </div>
+      <input type="range" id="segments" min="3" max="64" step="1" value="32" />
+    </div>
+  </div>
+
+  <!-- Material controls -->
+  <div class="section">
+    <div class="section-title">Material</div>
+    <div class="control-row">
+      <div class="control-label">
+        <span>Roughness</span>
+        <span class="value" id="roughness-val">0.40</span>
+      </div>
+      <input type="range" id="roughness" min="0" max="1" step="0.01" value="0.40" />
+    </div>
+    <div class="control-row">
+      <div class="control-label">
+        <span>Metalness</span>
+        <span class="value" id="metalness-val">0.30</span>
+      </div>
+      <input type="range" id="metalness" min="0" max="1" step="0.01" value="0.30" />
+    </div>
+    <div class="color-row">
+      <label>Object Color</label>
+      <div class="color-swatch" id="color-swatch">
+        <div class="color-preview" id="color-preview" style="background:#5566ff"></div>
+        <input type="color" id="color-picker" value="#5566ff" />
+      </div>
+    </div>
+    <div class="color-row">
+      <label>Emissive</label>
+      <div class="color-swatch" id="emissive-swatch">
+        <div class="color-preview" id="emissive-preview" style="background:#220044"></div>
+        <input type="color" id="emissive-picker" value="#220044" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Animation controls -->
+  <div class="section">
+    <div class="section-title">Animation</div>
+    <div class="control-row">
+      <div class="control-label">
+        <span>Rotation Speed</span>
+        <span class="value" id="speed-val">1.0</span>
+      </div>
+      <input type="range" id="speed" min="0" max="4" step="0.1" value="1.0" />
+    </div>
+    <div class="toggle-row">
+      <label>Auto Rotate</label>
+      <div class="toggle on" id="toggle-rotate"></div>
+    </div>
+    <div class="toggle-row">
+      <label>Wireframe</label>
+      <div class="toggle" id="toggle-wireframe"></div>
+    </div>
+  </div>
+
+  <!-- Environment controls -->
+  <div class="section">
+    <div class="section-title">Environment</div>
+    <div class="control-row">
+      <div class="control-label">
+        <span>Ambient Intensity</span>
+        <span class="value" id="ambient-val">0.40</span>
+      </div>
+      <input type="range" id="ambient" min="0" max="2" step="0.05" value="0.40" />
+    </div>
+    <div class="control-row">
+      <div class="control-label">
+        <span>Light Intensity</span>
+        <span class="value" id="light-val">1.00</span>
+      </div>
+      <input type="range" id="light-intensity" min="0" max="4" step="0.05" value="1.00" />
+    </div>
+    <div class="toggle-row">
+      <label>Grid Helper</label>
+      <div class="toggle on" id="toggle-grid"></div>
+    </div>
+  </div>
+
+  <!-- Generate button -->
+  <button id="generate-btn">Generate Shape</button>
+
+  <!-- Metadata -->
+  <div class="section">
+    <div class="section-title">Info</div>
+    <div class="meta-grid">
+      <div class="meta-card">
+        <div class="meta-label">Shape</div>
+        <div class="meta-value" id="meta-shape">Cube</div>
+      </div>
+      <div class="meta-card">
+        <div class="meta-label">Vertices</div>
+        <div class="meta-value" id="meta-verts">—</div>
+      </div>
+      <div class="meta-card">
+        <div class="meta-label">Faces</div>
+        <div class="meta-value" id="meta-faces">—</div>
+      </div>
+      <div class="meta-card">
+        <div class="meta-label">Scale</div>
+        <div class="meta-value" id="meta-scale">1.0×</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Three.js ── -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ── State ── */
+  const state = {
+    shape: 'box',
+    scale: 1.0,
+    segments: 32,
+    roughness: 0.40,
+    metalness: 0.30,
+    color: '#5566ff',
+    emissive: '#220044',
+    speed: 1.0,
+    autoRotate: true,
+    wireframe: false,
+    ambient: 0.40,
+    lightIntensity: 1.0,
+    grid: true,
+  };
+
+  /* ── Scene setup ── */
+  const container = document.getElementById('canvas-panel');
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  container.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0a0a12);
+  scene.fog = new THREE.Fog(0x0a0a12, 20, 60);
+
+  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 200);
+  camera.position.set(3, 2, 4);
+
+  /* OrbitControls */
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 1;
+  controls.maxDistance = 20;
+
+  /* Lights */
+  const ambientLight = new THREE.AmbientLight(0xffffff, state.ambient);
+  scene.add(ambientLight);
+
+  const dirLight = new THREE.DirectionalLight(0xffffff, state.lightIntensity);
+  dirLight.position.set(5, 8, 5);
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.set(1024, 1024);
+  scene.add(dirLight);
+
+  const fillLight = new THREE.DirectionalLight(0x8899ff, 0.3);
+  fillLight.position.set(-5, -2, -5);
+  scene.add(fillLight);
+
+  /* Grid */
+  const grid = new THREE.GridHelper(20, 20, 0x223355, 0x172040);
+  grid.position.y = -1.5;
+  scene.add(grid);
+
+  /* Material */
+  const material = new THREE.MeshStandardMaterial({
+    color: new THREE.Color(state.color),
+    emissive: new THREE.Color(state.emissive),
+    roughness: state.roughness,
+    metalness: state.metalness,
+  });
+
+  /* Mesh */
+  let mesh = null;
+
+  function buildGeometry() {
+    const s = state.segments;
+    switch (state.shape) {
+      case 'box':         return new THREE.BoxGeometry(1, 1, 1, Math.max(1, Math.floor(s/10)), Math.max(1, Math.floor(s/10)), Math.max(1, Math.floor(s/10)));
+      case 'sphere':      return new THREE.SphereGeometry(0.7, s, Math.max(2, Math.floor(s/2)));
+      case 'torus':       return new THREE.TorusGeometry(0.7, 0.28, Math.max(3, Math.floor(s/2)), s);
+      case 'cylinder':    return new THREE.CylinderGeometry(0.6, 0.6, 1.2, s);
+      case 'cone':        return new THREE.ConeGeometry(0.75, 1.4, s);
+      case 'octahedron':  return new THREE.OctahedronGeometry(0.85, Math.max(0, Math.floor(s/16)));
+      default:            return new THREE.BoxGeometry(1, 1, 1);
+    }
+  }
+
+  function generateShape() {
+    if (mesh) {
+      scene.remove(mesh);
+      mesh.geometry.dispose();
+    }
+
+    const geo = buildGeometry();
+    material.color.set(state.color);
+    material.emissive.set(state.emissive);
+    material.roughness = state.roughness;
+    material.metalness = state.metalness;
+    material.wireframe = state.wireframe;
+    material.needsUpdate = true;
+
+    mesh = new THREE.Mesh(geo, material);
+    mesh.scale.setScalar(state.scale);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    scene.add(mesh);
+
+    /* Metadata */
+    const pos = geo.attributes.position;
+    const verts = pos ? pos.count : 0;
+    const idx = geo.index;
+    const faces = idx ? idx.count / 3 : verts / 3;
+
+    document.getElementById('meta-shape').textContent = shapeLabel(state.shape);
+    document.getElementById('meta-verts').textContent = verts.toLocaleString();
+    document.getElementById('meta-faces').textContent = Math.round(faces).toLocaleString();
+    document.getElementById('meta-scale').textContent = state.scale.toFixed(2) + '×';
+  }
+
+  function shapeLabel(s) {
+    return { box: 'Cube', sphere: 'Sphere', torus: 'Torus', cylinder: 'Cylinder', cone: 'Cone', octahedron: 'Octahedron' }[s] || s;
+  }
+
+  /* Initial generate */
+  generateShape();
+
+  /* ── Resize ── */
+  function resize() {
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    renderer.setSize(w, h);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* ── Render loop ── */
+  const clock = new THREE.Clock();
+  function animate() {
+    requestAnimationFrame(animate);
+    const dt = clock.getDelta();
+    if (mesh && state.autoRotate) {
+      mesh.rotation.y += dt * state.speed * 0.8;
+      mesh.rotation.x += dt * state.speed * 0.15;
+    }
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  /* ── UI wiring ── */
+
+  /* Shape buttons */
+  document.querySelectorAll('.shape-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.shape = btn.dataset.shape;
+    });
+  });
+
+  /* Sliders */
+  function wireSlider(id, stateKey, displayId, fmt) {
+    const el = document.getElementById(id);
+    const disp = document.getElementById(displayId);
+    el.addEventListener('input', () => {
+      const v = parseFloat(el.value);
+      state[stateKey] = v;
+      disp.textContent = fmt(v);
+      applyLiveUpdates(stateKey, v);
+    });
+  }
+
+  function applyLiveUpdates(key, v) {
+    if (key === 'roughness') { material.roughness = v; material.needsUpdate = true; }
+    if (key === 'metalness') { material.metalness = v; material.needsUpdate = true; }
+    if (key === 'ambient') { ambientLight.intensity = v; }
+    if (key === 'lightIntensity') { dirLight.intensity = v; }
+    if (key === 'scale' && mesh) { mesh.scale.setScalar(v); document.getElementById('meta-scale').textContent = v.toFixed(2) + '×'; }
+    if (key === 'speed') { /* used in loop */ }
+  }
+
+  wireSlider('scale', 'scale', 'scale-val', v => v.toFixed(2));
+  wireSlider('segments', 'segments', 'segments-val', v => Math.round(v));
+  wireSlider('roughness', 'roughness', 'roughness-val', v => v.toFixed(2));
+  wireSlider('metalness', 'metalness', 'metalness-val', v => v.toFixed(2));
+  wireSlider('speed', 'speed', 'speed-val', v => v.toFixed(1));
+  wireSlider('ambient', 'ambient', 'ambient-val', v => v.toFixed(2));
+  wireSlider('light-intensity', 'lightIntensity', 'light-val', v => v.toFixed(2));
+
+  /* Color pickers */
+  function wireColor(pickerId, previewId, stateKey) {
+    const picker = document.getElementById(pickerId);
+    const preview = document.getElementById(previewId);
+    picker.addEventListener('input', () => {
+      state[stateKey] = picker.value;
+      preview.style.background = picker.value;
+      if (stateKey === 'color') { material.color.set(picker.value); }
+      if (stateKey === 'emissive') { material.emissive.set(picker.value); }
+    });
+  }
+
+  wireColor('color-picker', 'color-preview', 'color');
+  wireColor('emissive-picker', 'emissive-preview', 'emissive');
+
+  /* Toggles */
+  function wireToggle(id, stateKey, onChange) {
+    const el = document.getElementById(id);
+    el.addEventListener('click', () => {
+      state[stateKey] = !state[stateKey];
+      el.classList.toggle('on', state[stateKey]);
+      onChange(state[stateKey]);
+    });
+  }
+
+  wireToggle('toggle-rotate', 'autoRotate', () => {});
+  wireToggle('toggle-wireframe', 'wireframe', v => { material.wireframe = v; material.needsUpdate = true; });
+  wireToggle('toggle-grid', 'grid', v => { grid.visible = v; });
+
+  /* Generate button */
+  document.getElementById('generate-btn').addEventListener('click', () => {
+    generateShape();
+    /* Animate button feedback */
+    const btn = document.getElementById('generate-btn');
+    btn.textContent = 'Generated!';
+    setTimeout(() => { btn.textContent = 'Generate Shape'; }, 900);
+  });
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{"eval_id":1,"configuration":"without_skill","expectations":[
+  {"text":"Hero contains an animated visual specific to focus/blocking (tabs being X'd out, timer animation)","passed":false,"evidence":"Hero uses static 🎯 emoji only — no tab animations, no timer visual, no blocking animation"},
+  {"text":"Page uses dark background (#0d0d0d or similar)","passed":false,"evidence":"background:#f9fafb — light grey theme"},
+  {"text":"Uses cyan or blue accent color appropriate for tech/SaaS","passed":true,"evidence":"#0891b2 cyan-blue used for buttons and accents"},
+  {"text":"Hero headline is 10 words or fewer","passed":true,"evidence":"'Stay Focused. Get More Done.' = 5 words"},
+  {"text":"Headline avoids 'world-class', 'innovative', 'seamless', 'powerful'","passed":true,"evidence":"No banned phrases, though headline is generic ('Stay Focused. Get More Done.' could be any productivity app)"},
+  {"text":"Stats section with at least 3 social proof numbers","passed":true,"evidence":"4 stats present"},
+  {"text":"Feature grid with at least 4 cards","passed":true,"evidence":"6 feature cards present"},
+  {"text":"Final CTA with email input and button","passed":true,"evidence":"Email input and Start Free Trial button present"},
+  {"text":"A countdown/focus timer is present and animated or functional","passed":false,"evidence":"No timer visual anywhere on the page"},
+  {"text":"Page contains CSS @keyframes animations","passed":false,"evidence":"No @keyframes defined in the CSS"}
+]}

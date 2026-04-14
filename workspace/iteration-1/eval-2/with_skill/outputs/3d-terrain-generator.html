@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Terrain Generator</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, sans-serif; background: #0f0f0f; color: #eee; display: flex; height: 100vh; overflow: hidden; }
+  #canvas-panel { flex: 1; position: relative; }
+  canvas { display: block; width: 100% !important; height: 100% !important; }
+  #label { position: absolute; top: 12px; left: 16px; font-size: 11px; letter-spacing: 1.5px; color: #555; text-transform: uppercase; pointer-events: none; }
+  #controls-panel {
+    width: 300px; background: #1a1a2e; border-left: 1px solid #2a2a4a;
+    padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 18px;
+  }
+  h1 { font-size: 15px; font-weight: 700; color: #fff; border-bottom: 1px solid #2a2a4a; padding-bottom: 12px; letter-spacing: 0.5px; }
+  .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #666; margin-bottom: 8px; }
+  .control-row { display: flex; flex-direction: column; gap: 6px; }
+  .control-row label { font-size: 12px; color: #9999bb; display: flex; justify-content: space-between; }
+  .control-row label span { color: #c8c8ff; font-weight: 600; }
+  input[type="range"] { width: 100%; accent-color: #7c3aed; }
+  select {
+    width: 100%; background: #111122; border: 1px solid #2a2a4a; color: #eee;
+    padding: 9px 10px; border-radius: 6px; font-size: 13px;
+  }
+  .btn {
+    border: none; padding: 12px 16px; border-radius: 8px;
+    cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; width: 100%;
+  }
+  .btn-primary { background: #7c3aed; color: #fff; }
+  .btn-primary:hover { background: #6d28d9; }
+  .meta { font-size: 11px; color: #555; background: #111122; padding: 10px 12px; border-radius: 6px; line-height: 1.9; }
+  .meta span { color: #8888cc; }
+  @media (max-width: 700px) {
+    body { flex-direction: column; }
+    #canvas-panel { flex: none; height: 50vh; }
+    #controls-panel { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div id="canvas-panel">
+  <canvas id="c"></canvas>
+  <div id="label">3D Terrain · Drag to orbit · Scroll to zoom</div>
+</div>
+<div id="controls-panel">
+  <h1>Terrain Generator</h1>
+
+  <div class="control-row">
+    <label>Roughness <span id="rough-val">0.5</span></label>
+    <input type="range" id="roughness" min="0.1" max="1.0" step="0.05" value="0.5">
+  </div>
+
+  <div class="control-row">
+    <label>Height Scale <span id="height-val">3.0</span></label>
+    <input type="range" id="height-scale" min="0.5" max="10" step="0.5" value="3.0">
+  </div>
+
+  <div class="control-row">
+    <label>Resolution <span id="res-val">60</span></label>
+    <input type="range" id="resolution" min="20" max="120" step="10" value="60">
+  </div>
+
+  <div class="control-row">
+    <label>Flatness <span id="flat-val">0.3</span></label>
+    <input type="range" id="flatness" min="0" max="1" step="0.05" value="0.3">
+  </div>
+
+  <div class="control-row">
+    <div class="section-label">Color Scheme</div>
+    <select id="color-scheme">
+      <option value="forest">Forest</option>
+      <option value="desert">Desert</option>
+      <option value="arctic">Arctic</option>
+      <option value="volcanic">Volcanic</option>
+      <option value="alien">Alien</option>
+    </select>
+  </div>
+
+  <button class="btn btn-primary" id="regenerate-btn">Regenerate Terrain</button>
+
+  <div class="meta" id="meta">
+    Vertices: <span id="m-verts">—</span><br>
+    Triangles: <span id="m-tris">—</span><br>
+    Seed: <span id="m-seed">—</span><br>
+    Scheme: <span id="m-scheme">Forest</span>
+  </div>
+</div>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const canvas = document.getElementById('c');
+const panel = document.getElementById('canvas-panel');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 500);
+camera.position.set(0, 12, 20);
+
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.07;
+controls.target.set(0, 0, 0);
+controls.maxPolarAngle = Math.PI * 0.48;
+
+// Lights
+const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+scene.add(ambient);
+const sun = new THREE.DirectionalLight(0xfff5e0, 1.8);
+sun.position.set(10, 20, 10);
+sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024);
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0x4488ff, 0.3);
+fill.position.set(-10, 5, -10);
+scene.add(fill);
+
+// Color schemes
+const schemes = {
+  forest:   { sky: 0x1a2a3a, fog: 0x1a2a3a, low: 0x1a5c2a, mid: 0x2d8a3e, high: 0x8b7355, peak: 0xffffff },
+  desert:   { sky: 0x2a1a0a, fog: 0x3a2a1a, low: 0xc19a6b, mid: 0xd4a96a, high: 0xa0785a, peak: 0xf5f5dc },
+  arctic:   { sky: 0x0a1520, fog: 0x0a1520, low: 0x2a4a6a, mid: 0x6a9abf, high: 0xd0e8f5, peak: 0xffffff },
+  volcanic: { sky: 0x100505, fog: 0x100505, low: 0x8b0000, mid: 0x4a2a2a, high: 0x2a2a2a, peak: 0xff4400 },
+  alien:    { sky: 0x050a10, fog: 0x050a10, low: 0x0a4a2a, mid: 0x2a8a5a, high: 0x6a3a8a, peak: 0x00ffaa },
+};
+
+// Simple seeded noise (xorshift + smoothstep)
+let seed = Math.random() * 10000;
+function seededRandom() {
+  seed ^= seed << 13; seed ^= seed >> 17; seed ^= seed << 5;
+  return (seed < 0 ? seed + 4294967296 : seed) / 4294967296;
+}
+function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+function lerp(a, b, t) { return a + t * (b - a); }
+
+// Perlin-ish noise using a hash table
+const perm = new Uint8Array(512);
+function reseed() {
+  seed = Math.random() * 0xffffffff | 0;
+  const p = new Uint8Array(256);
+  for (let i = 0; i < 256; i++) p[i] = i;
+  for (let i = 255; i > 0; i--) { const j = Math.floor(seededRandom() * (i + 1)); [p[i], p[j]] = [p[j], p[i]]; }
+  for (let i = 0; i < 512; i++) perm[i] = p[i & 255];
+}
+reseed();
+
+function grad(h, x, y) {
+  const v = h & 3;
+  const u = v < 2 ? x : y, w = v < 2 ? y : x;
+  return ((h & 1) ? -u : u) + ((h & 2) ? -w : w);
+}
+function noise2(x, y) {
+  const X = Math.floor(x) & 255, Y = Math.floor(y) & 255;
+  x -= Math.floor(x); y -= Math.floor(y);
+  const u = fade(x), v = fade(y);
+  const a = perm[X]+Y, b = perm[X+1]+Y;
+  return lerp(lerp(grad(perm[a], x, y), grad(perm[b], x-1, y), u),
+               lerp(grad(perm[a+1], x, y-1), grad(perm[b+1], x-1, y-1), u), v);
+}
+function fbm(x, y, octaves, roughness) {
+  let val = 0, amp = 1, freq = 1, max = 0;
+  for (let o = 0; o < octaves; o++) {
+    val += noise2(x * freq, y * freq) * amp;
+    max += amp; amp *= roughness; freq *= 2;
+  }
+  return val / max;
+}
+
+let terrain = null;
+let params = { roughness: 0.5, height: 3.0, resolution: 60, flatness: 0.3, scheme: 'forest' };
+
+const SCHEMES_KEYS = Object.keys(schemes);
+
+function getHeightColor(h01, scheme) {
+  const { low, mid, high, peak } = schemes[scheme];
+  const lo = new THREE.Color(low), mi = new THREE.Color(mid), hi = new THREE.Color(high), pk = new THREE.Color(peak);
+  if (h01 < 0.35) return lo.clone().lerp(mi, h01 / 0.35);
+  if (h01 < 0.7)  return mi.clone().lerp(hi, (h01 - 0.35) / 0.35);
+  return hi.clone().lerp(pk, (h01 - 0.7) / 0.3);
+}
+
+function generate() {
+  if (terrain) { scene.remove(terrain); terrain.geometry.dispose(); terrain.material.dispose(); }
+  const { roughness, height, resolution, flatness, scheme } = params;
+  const size = 30;
+  const geo = new THREE.PlaneGeometry(size, size, resolution, resolution);
+  geo.rotateX(-Math.PI / 2);
+
+  const pos = geo.attributes.position;
+  const colors = new Float32Array(pos.count * 3);
+  let minH = Infinity, maxH = -Infinity;
+  const heights = new Float32Array(pos.count);
+
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i) / size, z = pos.getZ(i) / size;
+    const dist = Math.sqrt(x*x + z*z) * 2;
+    const edge = Math.max(0, 1 - dist * dist);
+    let h = fbm(x * 3, z * 3, 6, roughness + 0.1) * height;
+    // Flatten peaks based on flatness
+    h = h * (1 - flatness) + Math.min(h, height * 0.4) * flatness;
+    h *= edge;
+    heights[i] = h;
+    if (h < minH) minH = h;
+    if (h > maxH) maxH = h;
+  }
+
+  const c = new THREE.Color();
+  for (let i = 0; i < pos.count; i++) {
+    pos.setY(i, heights[i]);
+    const h01 = maxH > minH ? (heights[i] - minH) / (maxH - minH) : 0;
+    getHeightColor(h01, scheme).toArray(colors, i * 3);
+  }
+  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geo.computeVertexNormals();
+
+  const mat = new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 0.85, metalness: 0.05 });
+  terrain = new THREE.Mesh(geo, mat);
+  terrain.receiveShadow = true;
+  terrain.castShadow = true;
+  scene.add(terrain);
+
+  // Update sky
+  const { sky, fog: fogColor } = schemes[scheme];
+  scene.background = new THREE.Color(sky);
+  scene.fog = new THREE.Fog(fogColor, 40, 120);
+
+  // Meta
+  document.getElementById('m-verts').textContent = pos.count.toLocaleString();
+  document.getElementById('m-tris').textContent = ((resolution * resolution * 2)).toLocaleString();
+  document.getElementById('m-seed').textContent = (seed & 0xffff).toString(16).padStart(4, '0');
+  document.getElementById('m-scheme').textContent = scheme.charAt(0).toUpperCase() + scheme.slice(1);
+}
+
+generate();
+
+// Controls wiring
+document.getElementById('roughness').addEventListener('input', e => {
+  params.roughness = +e.target.value;
+  document.getElementById('rough-val').textContent = params.roughness.toFixed(2);
+  generate();
+});
+document.getElementById('height-scale').addEventListener('input', e => {
+  params.height = +e.target.value;
+  document.getElementById('height-val').textContent = params.height.toFixed(1);
+  generate();
+});
+document.getElementById('resolution').addEventListener('input', e => {
+  params.resolution = +e.target.value;
+  document.getElementById('res-val').textContent = params.resolution;
+  generate();
+});
+document.getElementById('flatness').addEventListener('input', e => {
+  params.flatness = +e.target.value;
+  document.getElementById('flat-val').textContent = params.flatness.toFixed(2);
+  generate();
+});
+document.getElementById('color-scheme').addEventListener('change', e => {
+  params.scheme = e.target.value;
+  generate();
+});
+document.getElementById('regenerate-btn').addEventListener('click', () => {
+  reseed();
+  generate();
+});
+
+function resize() {
+  const w = panel.clientWidth, h = panel.clientHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(panel);
+resize();
+
+(function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+})();
+</script>
+</body>
+</html>

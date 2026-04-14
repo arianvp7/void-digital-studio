@@ -1,0 +1,12 @@
+{"eval_id":2,"configuration":"without_skill","expectations":[
+  {"text":"Hero contains an animated bakery visual (rising bread, steam, flying pastries)","passed":false,"evidence":"Hero uses static 🍞 emoji — no bread SVG, no steam animation, no flying pastries"},
+  {"text":"Page uses dark background","passed":true,"evidence":"hero and header use #1a0f05 dark brown — partial credit; body is #faf7f2 cream"},
+  {"text":"Uses warm amber/golden accent color appropriate for food/bakery","passed":true,"evidence":"#f59e0b amber used for logo, order button, accent elements"},
+  {"text":"Hero headline is 10 words or fewer","passed":true,"evidence":"'Portland's Sourdough, Delivered Fresh.' = 5 words"},
+  {"text":"Headline is specific to sourdough, not generic","passed":true,"evidence":"'Portland's Sourdough' is specific — mentions the city and the product type"},
+  {"text":"Stats section with at least 3 numbers","passed":true,"evidence":"4 stats: 6am, 72hr, 12+, PDX"},
+  {"text":"Product grid with at least 4 cards","passed":true,"evidence":"6 product cards present"},
+  {"text":"Final CTA/delivery section with form and button","passed":true,"evidence":"Delivery section with email input and Order Now button"},
+  {"text":"Copy mentions Portland for local identity","passed":true,"evidence":"Headline says 'Portland's Sourdough'; footer says Portland, OR"},
+  {"text":"Page contains CSS @keyframes animations","passed":false,"evidence":"No @keyframes defined anywhere in the CSS"}
+]}

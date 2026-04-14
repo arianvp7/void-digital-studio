@@ -1,0 +1,12 @@
+{"eval_id":0,"configuration":"without_skill","expectations":[
+  {"text":"Hero contains a business-specific animated visual (van, dog, grooming items)","passed":false,"evidence":"Hero uses a static 🐶 emoji only — no van SVG, no animations, no flying grooming tools"},
+  {"text":"Page uses dark background (#0d0d0d or similar dark color)","passed":false,"evidence":"background:#f8f9fa — light grey theme, not dark"},
+  {"text":"Uses a non-default accent color appropriate for pet/health industry","passed":true,"evidence":"#16a34a green used for buttons and logo"},
+  {"text":"Hero headline is 10 words or fewer","passed":true,"evidence":"'Mobile Dog Grooming That Comes to You' = 7 words"},
+  {"text":"Headline avoids generic phrases like 'world-class', 'innovative', 'seamless'","passed":true,"evidence":"No banned phrases found"},
+  {"text":"Stats/social proof section with at least 3 numbers present","passed":true,"evidence":"4 stats present: 3,200+ dogs, 4.9★, 0 cages, 90min"},
+  {"text":"Service grid with at least 4 cards each having icon, title, description","passed":true,"evidence":"6 service cards with emoji, h3, and p present"},
+  {"text":"Final CTA section with form input and button","passed":true,"evidence":"CTA section with zip input and Check Availability button"},
+  {"text":"Navigation bar is fixed/sticky with backdrop blur","passed":false,"evidence":"header is sticky but has no backdrop-filter blur"},
+  {"text":"Page contains CSS @keyframes animations","passed":false,"evidence":"No @keyframes animations defined anywhere in the CSS"}
+]}

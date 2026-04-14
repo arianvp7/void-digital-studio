@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FreshPup Mobile Dog Grooming</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:#f8f9fa;color:#1a1a1a}
+header{background:#fff;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:10}
+.logo{font-size:20px;font-weight:800;color:#16a34a}
+nav a{margin-left:24px;text-decoration:none;color:#555;font-size:14px;font-weight:500}
+.book-btn{background:#16a34a;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-left:24px}
+.hero{background:linear-gradient(135deg,#f0fdf4,#dcfce7);padding:80px 40px;text-align:center}
+.hero h1{font-size:48px;font-weight:900;color:#14532d;margin-bottom:16px;line-height:1.1}
+.hero p{font-size:18px;color:#166534;max-width:560px;margin:0 auto 32px;line-height:1.6}
+.hero-cta{background:#16a34a;color:#fff;border:none;padding:16px 32px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer}
+.hero-icon{font-size:80px;margin-bottom:24px}
+.stats{display:flex;justify-content:center;gap:64px;padding:48px 40px;background:#fff;border-bottom:1px solid #e5e7eb}
+.stat h3{font-size:36px;font-weight:900;color:#16a34a}
+.stat p{font-size:13px;color:#888;margin-top:4px}
+.services{padding:80px 40px;max-width:1000px;margin:0 auto}
+.services h2{font-size:36px;font-weight:800;text-align:center;margin-bottom:48px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.card{background:#fff;border-radius:12px;padding:28px;border:1px solid #e5e7eb;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.card span{font-size:32px}
+.card h3{font-size:17px;font-weight:700;margin:12px 0 8px}
+.card p{font-size:14px;color:#666;line-height:1.6}
+.cta{background:#14532d;color:#fff;text-align:center;padding:80px 40px}
+.cta h2{font-size:36px;font-weight:800;margin-bottom:16px}
+.cta p{font-size:16px;opacity:0.8;margin-bottom:32px}
+.cta input{padding:14px 18px;border-radius:8px;border:none;font-size:15px;width:260px;margin-right:12px}
+.cta button{background:#16a34a;color:#fff;border:none;padding:14px 28px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer}
+footer{text-align:center;padding:24px;background:#f1f5f9;font-size:13px;color:#888}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🐾 FreshPup</div>
+  <div>
+    <a href="#">Services</a><a href="#">How It Works</a><a href="#">Reviews</a><a href="#">Pricing</a>
+    <button class="book-btn">Book Now</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-icon">🐶</div>
+  <h1>Mobile Dog Grooming<br>That Comes to You</h1>
+  <p>Professional dog grooming in our fully equipped mobile van, parked right outside your home. No salons, no cages, no stress for your dog.</p>
+  <button class="hero-cta">Book a Grooming Session</button>
+</section>
+
+<div class="stats">
+  <div class="stat"><h3>3,200+</h3><p>Dogs groomed</p></div>
+  <div class="stat"><h3>4.9★</h3><p>Average rating</p></div>
+  <div class="stat"><h3>0</h3><p>Cages used</p></div>
+  <div class="stat"><h3>90min</h3><p>Avg session</p></div>
+</div>
+
+<section class="services">
+  <h2>Our Services</h2>
+  <div class="grid">
+    <div class="card"><span>🚐</span><h3>Full Groom</h3><p>Bath, haircut, nails, ears — everything done in our van outside your home.</p></div>
+    <div class="card"><span>✂️</span><h3>Breed Cuts</h3><p>Trained on 40+ breeds. Your dog gets the right cut for their coat type.</p></div>
+    <div class="card"><span>🛁</span><h3>Bath & Brush</h3><p>Premium shampoo, blow dry, and thorough brush-out between full grooms.</p></div>
+    <div class="card"><span>💅</span><h3>Nail Trim</h3><p>Quick, stress-free nail trims with optional grind finish.</p></div>
+    <div class="card"><span>👂</span><h3>Ear Cleaning</h3><p>Gentle ear cleaning and plucking to prevent infections.</p></div>
+    <div class="card"><span>🐾</span><h3>Puppy First Groom</h3><p>A calm, positive first grooming experience for young pups.</p></div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Ready to book?</h2>
+  <p>Enter your zip code to see availability in your area.</p>
+  <input type="text" placeholder="Enter zip code">
+  <button>Check Availability</button>
+</section>
+<footer>© 2026 FreshPup Mobile Grooming · Licensed & Insured</footer>
+</body>
+</html>

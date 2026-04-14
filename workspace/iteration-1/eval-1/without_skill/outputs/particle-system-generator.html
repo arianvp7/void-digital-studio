@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Particle System Generator</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0a0f;
+      color: #e0e0f0;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── LEFT: canvas ── */
+    #canvas-wrapper {
+      flex: 1 1 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #canvas-wrapper canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    #canvas-label {
+      position: absolute;
+      top: 16px;
+      left: 20px;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(180, 180, 255, 0.4);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* ── RIGHT: controls ── */
+    #controls {
+      width: 300px;
+      flex-shrink: 0;
+      background: #10101a;
+      border-left: 1px solid rgba(255, 255, 255, 0.07);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 24px;
+      gap: 28px;
+      overflow-y: auto;
+    }
+
+    #controls h1 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: #c8c8ff;
+      line-height: 1.3;
+    }
+
+    #controls h1 span {
+      display: block;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(180, 180, 255, 0.45);
+      margin-bottom: 4px;
+    }
+
+    .divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-row label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: rgba(210, 210, 255, 0.75);
+    }
+
+    .control-row label .value-badge {
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      color: #a0a0e8;
+      background: rgba(100, 100, 200, 0.15);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #7878e8;
+      border: 2px solid #a0a0ff;
+      box-shadow: 0 0 8px rgba(120, 120, 232, 0.6);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 14px rgba(120, 120, 232, 0.9);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #7878e8;
+      border: 2px solid #a0a0ff;
+      cursor: pointer;
+    }
+
+    /* Color row */
+    .color-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .color-row label {
+      font-size: 13px;
+      color: rgba(210, 210, 255, 0.75);
+    }
+
+    .color-swatches {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+
+    .swatch:hover {
+      transform: scale(1.15);
+    }
+
+    .swatch.active {
+      border-color: #ffffff;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+    }
+
+    .color-picker-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="color"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.2);
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+      border-radius: 50%;
+    }
+
+    input[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: 50%;
+    }
+
+    .color-picker-label {
+      font-size: 12px;
+      color: rgba(180, 180, 255, 0.55);
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    button {
+      width: 100%;
+      padding: 11px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    #btn-randomize {
+      background: linear-gradient(135deg, #5050c8 0%, #8040c0 100%);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(80, 60, 200, 0.4);
+    }
+
+    #btn-randomize:hover {
+      box-shadow: 0 6px 22px rgba(80, 60, 200, 0.65);
+    }
+
+    #btn-reset {
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(200, 200, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    #btn-reset:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Stats footer */
+    #stats {
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: rgba(160,160,200,0.4);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ LEFT: Three.js Canvas ══════════════ -->
+<div id="canvas-wrapper">
+  <div id="canvas-label">3D Particle Cloud</div>
+</div>
+
+<!-- ══════════════ RIGHT: Controls ══════════════ -->
+<div id="controls">
+  <h1>
+    <span>Particle System</span>
+    Generator
+  </h1>
+
+  <div class="divider"></div>
+
+  <div class="control-group">
+
+    <div class="control-row">
+      <label>
+        Particle Count
+        <span class="value-badge" id="val-count">5000</span>
+      </label>
+      <input type="range" id="sl-count" min="100" max="20000" step="100" value="5000" />
+    </div>
+
+    <div class="control-row">
+      <label>
+        Speed
+        <span class="value-badge" id="val-speed">1.0</span>
+      </label>
+      <input type="range" id="sl-speed" min="0.1" max="5.0" step="0.1" value="1.0" />
+    </div>
+
+    <div class="control-row">
+      <label>
+        Spread Radius
+        <span class="value-badge" id="val-spread">3.0</span>
+      </label>
+      <input type="range" id="sl-spread" min="0.5" max="10.0" step="0.1" value="3.0" />
+    </div>
+
+    <div class="control-row">
+      <label>
+        Particle Size
+        <span class="value-badge" id="val-size">2.0</span>
+      </label>
+      <input type="range" id="sl-size" min="0.5" max="6.0" step="0.1" value="2.0" />
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Color Section -->
+  <div class="color-row">
+    <label>Particle Color</label>
+    <div class="color-swatches" id="swatches">
+      <!-- filled by JS -->
+    </div>
+    <div class="color-picker-wrapper">
+      <input type="color" id="color-picker" value="#7878ff" />
+      <span class="color-picker-label">Custom color</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Buttons -->
+  <div class="btn-row">
+    <button id="btn-randomize">&#9680; Randomize All</button>
+    <button id="btn-reset">&#8635; Reset Defaults</button>
+  </div>
+
+  <!-- Stats -->
+  <div id="stats">
+    <span id="stat-fps">FPS: —</span>
+    <span id="stat-particles">Particles: —</span>
+  </div>
+</div>
+
+<!-- Three.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.min.js"></script>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Preset swatches ──────────────────────────────────────
+  const PRESETS = [
+    '#7878ff', '#ff4488', '#44ffcc', '#ffcc00',
+    '#ff7733', '#33ddff', '#cc44ff', '#ffffff'
+  ];
+
+  // ── State ────────────────────────────────────────────────
+  const state = {
+    count:  5000,
+    speed:  1.0,
+    spread: 3.0,
+    size:   2.0,
+    color:  '#7878ff',
+  };
+
+  const DEFAULTS = { ...state };
+
+  // ── Three.js setup ───────────────────────────────────────
+  const wrapper = document.getElementById('canvas-wrapper');
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x0a0a0f, 1);
+  wrapper.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, 1, 0.01, 100);
+  camera.position.set(0, 0, 8);
+
+  // Resize handler
+  function resizeRenderer() {
+    const w = wrapper.clientWidth;
+    const h = wrapper.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  resizeRenderer();
+  window.addEventListener('resize', resizeRenderer);
+
+  // ── Particle geometry ────────────────────────────────────
+  let particles = null;
+
+  function buildParticles() {
+    if (particles) {
+      scene.remove(particles);
+      particles.geometry.dispose();
+      particles.material.dispose();
+    }
+
+    const n = state.count;
+    const r = state.spread;
+    const positions = new Float32Array(n * 3);
+    const velocities = new Float32Array(n * 3); // stored in userData
+
+    for (let i = 0; i < n; i++) {
+      // Uniformly distributed in a sphere
+      const theta = Math.random() * Math.PI * 2;
+      const phi   = Math.acos(2 * Math.random() - 1);
+      const dist  = Math.cbrt(Math.random()) * r;
+
+      positions[i * 3]     = dist * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = dist * Math.sin(phi) * Math.sin(theta);
+      positions[i * 3 + 2] = dist * Math.cos(phi);
+
+      // Small random velocity per particle
+      velocities[i * 3]     = (Math.random() - 0.5) * 0.4;
+      velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.4;
+      velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.4;
+    }
+
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    // Create a circular sprite texture on canvas
+    const tex = makeParticleTexture();
+
+    const mat = new THREE.PointsMaterial({
+      size: state.size * 0.01,
+      sizeAttenuation: true,
+      map: tex,
+      color: new THREE.Color(state.color),
+      transparent: true,
+      alphaTest: 0.05,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+
+    particles = new THREE.Points(geo, mat);
+    particles.userData.velocities = velocities;
+    particles.userData.birthSpreads = new Float32Array(positions); // original positions
+    scene.add(particles);
+  }
+
+  function makeParticleTexture() {
+    const size = 64;
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    const half = size / 2;
+    const grad = ctx.createRadialGradient(half, half, 0, half, half, half);
+    grad.addColorStop(0,    'rgba(255,255,255,1)');
+    grad.addColorStop(0.4,  'rgba(255,255,255,0.8)');
+    grad.addColorStop(1,    'rgba(255,255,255,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, size, size);
+    const tex = new THREE.CanvasTexture(canvas);
+    return tex;
+  }
+
+  // ── Animation ────────────────────────────────────────────
+  let lastTime = performance.now();
+  let frameCount = 0;
+  let lastFpsTime = performance.now();
+  let autoRotate = 0;
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    const now = performance.now();
+    const dt  = Math.min((now - lastTime) / 1000, 0.05);
+    lastTime  = now;
+
+    // FPS counter
+    frameCount++;
+    if (now - lastFpsTime > 600) {
+      const fps = Math.round(frameCount / ((now - lastFpsTime) / 1000));
+      document.getElementById('stat-fps').textContent = `FPS: ${fps}`;
+      document.getElementById('stat-particles').textContent = `Particles: ${state.count.toLocaleString()}`;
+      frameCount = 0;
+      lastFpsTime = now;
+    }
+
+    if (!particles) { renderer.render(scene, camera); return; }
+
+    // Oscillate particles around their origin
+    const pos = particles.geometry.attributes.position;
+    const vel = particles.userData.velocities;
+    const base = particles.userData.birthSpreads;
+    const n = state.count;
+    const spd = state.speed;
+
+    for (let i = 0; i < n; i++) {
+      const ix = i * 3, iy = ix + 1, iz = ix + 2;
+      pos.array[ix] += vel[ix] * dt * spd * 0.5;
+      pos.array[iy] += vel[iy] * dt * spd * 0.5;
+      pos.array[iz] += vel[iz] * dt * spd * 0.5;
+
+      // Soft spring back to birth position
+      const k = 0.4 * spd;
+      vel[ix] += (base[ix] - pos.array[ix]) * k * dt;
+      vel[iy] += (base[iy] - pos.array[iy]) * k * dt;
+      vel[iz] += (base[iz] - pos.array[iz]) * k * dt;
+
+      // Damping
+      const damp = 1 - 0.8 * dt;
+      vel[ix] *= damp;
+      vel[iy] *= damp;
+      vel[iz] *= damp;
+    }
+    pos.needsUpdate = true;
+
+    // Auto-rotate the whole cloud
+    autoRotate += dt * 0.15;
+    particles.rotation.y = autoRotate;
+    particles.rotation.x = Math.sin(autoRotate * 0.3) * 0.25;
+
+    renderer.render(scene, camera);
+  }
+
+  // ── Mouse drag to rotate ─────────────────────────────────
+  let drag = false, prevX = 0, prevY = 0;
+  let manualRotX = 0, manualRotY = 0;
+
+  wrapper.addEventListener('mousedown', e => {
+    drag = true; prevX = e.clientX; prevY = e.clientY;
+  });
+  window.addEventListener('mouseup', () => { drag = false; });
+  window.addEventListener('mousemove', e => {
+    if (!drag || !particles) return;
+    const dx = e.clientX - prevX;
+    const dy = e.clientY - prevY;
+    manualRotY += dx * 0.005;
+    manualRotX += dy * 0.005;
+    autoRotate += dx * 0.005; // fold into auto so it continues smoothly
+    prevX = e.clientX; prevY = e.clientY;
+  });
+
+  // Scroll to zoom
+  wrapper.addEventListener('wheel', e => {
+    e.preventDefault();
+    camera.position.z = Math.max(2, Math.min(20, camera.position.z + e.deltaY * 0.01));
+  }, { passive: false });
+
+  // ── Control wiring ───────────────────────────────────────
+  function sl(id, key, decimals, rebuild) {
+    const input = document.getElementById(`sl-${id}`);
+    const badge = document.getElementById(`val-${id}`);
+    input.addEventListener('input', () => {
+      const v = parseFloat(input.value);
+      state[key] = v;
+      badge.textContent = v.toFixed(decimals);
+      if (rebuild) {
+        buildParticles();
+      } else {
+        applyNonRebuildChanges();
+      }
+    });
+  }
+
+  sl('count',  'count',  0, true);
+  sl('speed',  'speed',  1, false);
+  sl('spread', 'spread', 1, true);
+  sl('size',   'size',   1, false);
+
+  function applyNonRebuildChanges() {
+    if (!particles) return;
+    particles.material.size  = state.size * 0.01;
+    particles.material.color.set(state.color);
+    particles.material.needsUpdate = true;
+  }
+
+  // ── Color controls ───────────────────────────────────────
+  const swatchContainer = document.getElementById('swatches');
+  const colorPicker     = document.getElementById('color-picker');
+
+  PRESETS.forEach(hex => {
+    const div = document.createElement('div');
+    div.className = 'swatch' + (hex === state.color ? ' active' : '');
+    div.style.background = hex;
+    div.title = hex;
+    div.addEventListener('click', () => {
+      setColor(hex);
+      colorPicker.value = hex;
+      document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+      div.classList.add('active');
+    });
+    swatchContainer.appendChild(div);
+  });
+
+  colorPicker.addEventListener('input', () => {
+    setColor(colorPicker.value);
+    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+  });
+
+  function setColor(hex) {
+    state.color = hex;
+    if (particles) {
+      particles.material.color.set(hex);
+      particles.material.needsUpdate = true;
+    }
+  }
+
+  // ── Randomize ────────────────────────────────────────────
+  document.getElementById('btn-randomize').addEventListener('click', () => {
+    const randInt  = (mn, mx, step) => Math.round((mn + Math.random() * (mx - mn)) / step) * step;
+    const randF    = (mn, mx) => +(mn + Math.random() * (mx - mn)).toFixed(1);
+
+    state.count  = randInt(500, 15000, 100);
+    state.speed  = randF(0.1, 4.0);
+    state.spread = randF(0.5, 8.0);
+    state.size   = randF(0.5, 5.0);
+
+    // Random vibrant color
+    const hue = Math.random() * 360;
+    state.color = hslToHex(hue, 80 + Math.random() * 20, 55 + Math.random() * 15);
+
+    syncUI();
+    buildParticles();
+  });
+
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    Object.assign(state, DEFAULTS);
+    syncUI();
+    buildParticles();
+  });
+
+  function syncUI() {
+    document.getElementById('sl-count').value   = state.count;
+    document.getElementById('sl-speed').value   = state.speed;
+    document.getElementById('sl-spread').value  = state.spread;
+    document.getElementById('sl-size').value    = state.size;
+
+    document.getElementById('val-count').textContent  = state.count;
+    document.getElementById('val-speed').textContent  = state.speed.toFixed(1);
+    document.getElementById('val-spread').textContent = state.spread.toFixed(1);
+    document.getElementById('val-size').textContent   = state.size.toFixed(1);
+
+    colorPicker.value = state.color;
+    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+    // Highlight preset if it matches
+    document.querySelectorAll('.swatch').forEach(s => {
+      if (s.style.background === hexToRgb(state.color) || s.title === state.color) {
+        s.classList.add('active');
+      }
+    });
+  }
+
+  // ── Colour helpers ────────────────────────────────────────
+  function hslToHex(h, s, l) {
+    s /= 100; l /= 100;
+    const a = s * Math.min(l, 1 - l);
+    const f = n => {
+      const k = (n + h / 30) % 12;
+      const c = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
+      return Math.round(255 * c).toString(16).padStart(2, '0');
+    };
+    return `#${f(0)}${f(8)}${f(4)}`;
+  }
+
+  function hexToRgb(hex) {
+    const r = parseInt(hex.slice(1,3),16);
+    const g = parseInt(hex.slice(3,5),16);
+    const b = parseInt(hex.slice(5,7),16);
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+
+  // ── Boot ─────────────────────────────────────────────────
+  buildParticles();
+  animate();
+
+})();
+</script>
+</body>
+</html>

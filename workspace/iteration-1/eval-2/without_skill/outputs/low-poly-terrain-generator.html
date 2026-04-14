@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Low-Poly Terrain Generator</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f1117;
+      color: #e0e6f0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    header {
+      padding: 12px 24px;
+      background: #161b27;
+      border-bottom: 1px solid #2a3045;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    header h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: #a8c0e8;
+    }
+
+    header span {
+      font-size: 0.75rem;
+      color: #556080;
+    }
+
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── Three.js canvas area ── */
+    #canvas-wrapper {
+      flex: 1;
+      position: relative;
+      background: #0a0d14;
+    }
+
+    #canvas-wrapper canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* ── Controls panel ── */
+    .panel {
+      width: 280px;
+      flex-shrink: 0;
+      background: #161b27;
+      border-left: 1px solid #2a3045;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      overflow-y: auto;
+    }
+
+    .panel-section h2 {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #556080;
+      margin-bottom: 14px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 16px;
+    }
+
+    .control-group:last-child { margin-bottom: 0; }
+
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 0.82rem;
+      color: #b0bcd4;
+    }
+
+    .control-label span.val {
+      font-size: 0.78rem;
+      color: #6a7fa8;
+      font-variant-numeric: tabular-nums;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: #2a3045;
+      outline: none;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #4d8af0;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      background: #7aaaf8;
+    }
+
+    /* Color scheme selector */
+    .scheme-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .scheme-btn {
+      border: 2px solid transparent;
+      border-radius: 8px;
+      padding: 8px 4px;
+      background: #1e2535;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      transition: border-color 0.15s, background 0.15s;
+      font-size: 0.72rem;
+      color: #8898bb;
+      font-family: inherit;
+    }
+
+    .scheme-btn:hover {
+      background: #252d42;
+      border-color: #3a4a6a;
+    }
+
+    .scheme-btn.active {
+      border-color: #4d8af0;
+      background: #1c2a48;
+      color: #a8c0e8;
+    }
+
+    .scheme-swatch {
+      width: 100%;
+      height: 32px;
+      border-radius: 4px;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .scheme-swatch span {
+      flex: 1;
+    }
+
+    /* Regenerate button */
+    .regen-btn {
+      width: 100%;
+      padding: 11px;
+      border: none;
+      border-radius: 8px;
+      background: #4d8af0;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .regen-btn:hover { background: #5f97f8; }
+    .regen-btn:active { transform: scale(0.97); }
+
+    .info-row {
+      font-size: 0.72rem;
+      color: #3a4a6a;
+      text-align: center;
+      margin-top: auto;
+      padding-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Low-Poly Terrain Generator</h1>
+  <span>Three.js &middot; Perlin Noise &middot; Flat Shading</span>
+</header>
+
+<div class="main">
+  <div id="canvas-wrapper"></div>
+
+  <aside class="panel">
+    <div class="panel-section">
+      <h2>Terrain Parameters</h2>
+
+      <div class="control-group">
+        <label class="control-label" for="roughness">
+          Roughness <span class="val" id="roughness-val">0.55</span>
+        </label>
+        <input type="range" id="roughness" min="0.1" max="1.0" step="0.01" value="0.55" />
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="heightScale">
+          Height Scale <span class="val" id="heightScale-val">4.0</span>
+        </label>
+        <input type="range" id="heightScale" min="0.5" max="10.0" step="0.1" value="4.0" />
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="segments">
+          Resolution <span class="val" id="segments-val">60</span>
+        </label>
+        <input type="range" id="segments" min="20" max="120" step="5" value="60" />
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <h2>Color Scheme</h2>
+      <div class="scheme-grid">
+        <button class="scheme-btn active" data-scheme="desert">
+          <div class="scheme-swatch">
+            <span style="background:#c8a96e"></span>
+            <span style="background:#e8c47a"></span>
+            <span style="background:#b87333"></span>
+          </div>
+          Desert
+        </button>
+        <button class="scheme-btn" data-scheme="arctic">
+          <div class="scheme-swatch">
+            <span style="background:#a8c8e8"></span>
+            <span style="background:#deeef8"></span>
+            <span style="background:#6898c8"></span>
+          </div>
+          Arctic
+        </button>
+        <button class="scheme-btn" data-scheme="forest">
+          <div class="scheme-swatch">
+            <span style="background:#3a7a3a"></span>
+            <span style="background:#5aa04a"></span>
+            <span style="background:#8b6914"></span>
+          </div>
+          Forest
+        </button>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <h2>Actions</h2>
+      <button class="regen-btn" id="regen">&#8635; Regenerate Terrain</button>
+    </div>
+
+    <p class="info-row">Drag to orbit &middot; Scroll to zoom</p>
+  </aside>
+</div>
+
+<!-- Three.js from CDN -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.165.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.165.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ── Simplex / Perlin-like noise (custom, no external dep) ───────────────────
+// Classic improved noise (Ken Perlin, 2002) – 2-D implementation
+const grad3 = [
+  [1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],
+  [1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],
+  [0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]
+];
+
+function buildPerm(seed) {
+  const p = Array.from({length: 256}, (_, i) => i);
+  // deterministic shuffle
+  let s = seed >>> 0;
+  for (let i = 255; i > 0; i--) {
+    s = (s * 1664525 + 1013904223) >>> 0;
+    const j = s % (i + 1);
+    [p[i], p[j]] = [p[j], p[i]];
+  }
+  const perm = new Uint8Array(512);
+  for (let i = 0; i < 512; i++) perm[i] = p[i & 255];
+  return perm;
+}
+
+function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+function lerp(a, b, t) { return a + t * (b - a); }
+function dot2(g, x, y) { return g[0] * x + g[1] * y; }
+
+function noise2(perm, x, y) {
+  const X = Math.floor(x) & 255, Y = Math.floor(y) & 255;
+  const xf = x - Math.floor(x), yf = y - Math.floor(y);
+  const u = fade(xf), v = fade(yf);
+  const a = perm[X] + Y, b = perm[X+1] + Y;
+  return lerp(
+    lerp(dot2(grad3[perm[a]   % 12], xf,   yf  ),
+         dot2(grad3[perm[b]   % 12], xf-1, yf  ), u),
+    lerp(dot2(grad3[perm[a+1] % 12], xf,   yf-1),
+         dot2(grad3[perm[b+1] % 12], xf-1, yf-1), u),
+    v
+  );
+}
+
+function fbm(perm, x, y, octaves, roughness) {
+  let val = 0, amp = 0.5, freq = 1, max = 0;
+  for (let i = 0; i < octaves; i++) {
+    val += noise2(perm, x * freq, y * freq) * amp;
+    max += amp;
+    amp *= roughness;
+    freq *= 2;
+  }
+  return val / max;
+}
+// ────────────────────────────────────────────────────────────────────────────
+
+// Color schemes
+const SCHEMES = {
+  desert: {
+    sky: 0x2a1a0a,
+    fog: 0x3a2a14,
+    getLowColor:  (n) => lerpColor(0x7a4a1a, 0xc8a060, n),
+    getHighColor: (n) => lerpColor(0xc8a060, 0xe8d0a0, n),
+    waterColor: 0x3a6090,
+    snowColor:  0xe8d4b0,
+    threshold: 0.55,
+  },
+  arctic: {
+    sky: 0x0a1a2a,
+    fog: 0x1a2a3a,
+    getLowColor:  (n) => lerpColor(0x1a3a6a, 0x4a88c8, n),
+    getHighColor: (n) => lerpColor(0x88b8e0, 0xf0f8ff, n),
+    waterColor: 0x0a2050,
+    snowColor:  0xf0f8ff,
+    threshold: 0.4,
+  },
+  forest: {
+    sky: 0x0a160a,
+    fog: 0x162010,
+    getLowColor:  (n) => lerpColor(0x1a3a1a, 0x3a7a2a, n),
+    getHighColor: (n) => lerpColor(0x5a9a30, 0xd8c870, n),
+    waterColor: 0x1a3a5a,
+    snowColor:  0xe8e8e8,
+    threshold: 0.6,
+  },
+};
+
+function lerpColor(c1, c2, t) {
+  const r1=(c1>>16)&0xff, g1=(c1>>8)&0xff, b1=c1&0xff;
+  const r2=(c2>>16)&0xff, g2=(c2>>8)&0xff, b2=c2&0xff;
+  const r=Math.round(r1+(r2-r1)*t);
+  const g=Math.round(g1+(g2-g1)*t);
+  const b=Math.round(b1+(b2-b1)*t);
+  return (r<<16)|(g<<8)|b;
+}
+
+// ── Scene setup ─────────────────────────────────────────────────────────────
+const wrapper = document.getElementById('canvas-wrapper');
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+wrapper.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 500);
+camera.position.set(0, 18, 28);
+camera.lookAt(0, 0, 0);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.minDistance = 5;
+controls.maxDistance = 80;
+controls.maxPolarAngle = Math.PI / 2.05;
+
+// Lights
+const ambient = new THREE.AmbientLight(0xffffff, 0.45);
+scene.add(ambient);
+
+const sun = new THREE.DirectionalLight(0xfff0d0, 1.4);
+sun.position.set(15, 30, 20);
+sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024);
+sun.shadow.camera.near = 0.5;
+sun.shadow.camera.far = 120;
+sun.shadow.camera.left = -30;
+sun.shadow.camera.right = 30;
+sun.shadow.camera.top = 30;
+sun.shadow.camera.bottom = -30;
+scene.add(sun);
+
+const fill = new THREE.DirectionalLight(0x8090c0, 0.3);
+fill.position.set(-10, 10, -10);
+scene.add(fill);
+
+// ── Terrain ──────────────────────────────────────────────────────────────────
+let terrainMesh = null;
+let waterMesh = null;
+
+function getParams() {
+  return {
+    roughness:   parseFloat(document.getElementById('roughness').value),
+    heightScale: parseFloat(document.getElementById('heightScale').value),
+    segments:    parseInt(document.getElementById('segments').value),
+    scheme:      document.querySelector('.scheme-btn.active').dataset.scheme,
+  };
+}
+
+function buildTerrain(seed) {
+  const { roughness, heightScale, segments, scheme } = getParams();
+  const s = SCHEMES[scheme];
+
+  const perm = buildPerm(seed);
+  const size = 40;
+  const half = size / 2;
+
+  // Geometry
+  const geo = new THREE.PlaneGeometry(size, size, segments, segments);
+  geo.rotateX(-Math.PI / 2);
+
+  const pos = geo.attributes.position;
+  const count = pos.count;
+  const colors = new Float32Array(count * 3);
+
+  // Generate heights
+  const scale = 2.5 * roughness;   // horizontal frequency
+  for (let i = 0; i < count; i++) {
+    const x = pos.getX(i);
+    const z = pos.getZ(i);
+    // radial fade so edges slope down to sea level
+    const dx = x / half, dz = z / half;
+    const edgeFade = Math.max(0, 1 - (dx*dx + dz*dz) * 0.5);
+    const n = fbm(perm, x * scale / size + 0.5, z * scale / size + 0.5, 6, roughness);
+    pos.setY(i, n * heightScale * edgeFade);
+  }
+  pos.needsUpdate = true;
+
+  // Flat shading requires non-indexed geometry
+  const nonIndexed = geo.toNonIndexed();
+  const posNI = nonIndexed.attributes.position;
+  const faceCount = posNI.count;
+  const faceColors = new Float32Array(faceCount * 3);
+
+  // Assign colors per face (every 3 verts)
+  const maxH = heightScale;
+  for (let f = 0; f < faceCount; f += 3) {
+    // average height of triangle
+    const h = (posNI.getY(f) + posNI.getY(f+1) + posNI.getY(f+2)) / 3;
+    const t = Math.max(0, Math.min(1, h / maxH));
+
+    let col;
+    if (t < 0.05) {
+      col = s.waterColor;        // water / low shore
+    } else if (t < s.threshold) {
+      col = s.getLowColor(t / s.threshold);
+    } else {
+      const tt = (t - s.threshold) / (1 - s.threshold);
+      col = s.getHighColor(tt);
+    }
+
+    // small random per-face brightness variation for visual interest
+    const jitter = 0.92 + Math.random() * 0.16;
+    const r = ((col >> 16) & 0xff) / 255 * jitter;
+    const g = ((col >>  8) & 0xff) / 255 * jitter;
+    const b =  (col        & 0xff) / 255 * jitter;
+
+    faceColors[f*3]=r;   faceColors[f*3+1]=g;   faceColors[f*3+2]=b;
+    faceColors[f*3+3]=r; faceColors[f*3+4]=g;   faceColors[f*3+5]=b;
+    faceColors[f*3+6]=r; faceColors[f*3+7]=g;   faceColors[f*3+8]=b;
+  }
+
+  nonIndexed.setAttribute('color', new THREE.BufferAttribute(faceColors, 3));
+  nonIndexed.computeVertexNormals();
+
+  const mat = new THREE.MeshLambertMaterial({
+    vertexColors: true,
+    flatShading: true,
+  });
+
+  const mesh = new THREE.Mesh(nonIndexed, mat);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  return mesh;
+}
+
+function buildWater(scheme) {
+  const s = SCHEMES[scheme];
+  const geo = new THREE.PlaneGeometry(40, 40);
+  geo.rotateX(-Math.PI / 2);
+  const mat = new THREE.MeshLambertMaterial({
+    color: s.waterColor,
+    transparent: true,
+    opacity: 0.78,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.y = 0.12;
+  return mesh;
+}
+
+function regenerate() {
+  const seed = Math.floor(Math.random() * 0xffffffff);
+  const { scheme } = getParams();
+  const s = SCHEMES[scheme];
+
+  scene.background = new THREE.Color(s.sky);
+  scene.fog = new THREE.Fog(s.fog, 50, 130);
+
+  if (terrainMesh) { scene.remove(terrainMesh); terrainMesh.geometry.dispose(); terrainMesh.material.dispose(); }
+  if (waterMesh)   { scene.remove(waterMesh);   waterMesh.geometry.dispose();   waterMesh.material.dispose(); }
+
+  terrainMesh = buildTerrain(seed);
+  waterMesh   = buildWater(scheme);
+
+  scene.add(waterMesh);
+  scene.add(terrainMesh);
+}
+
+// ── Resize ───────────────────────────────────────────────────────────────────
+function onResize() {
+  const w = wrapper.clientWidth, h = wrapper.clientHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+}
+window.addEventListener('resize', onResize);
+onResize();
+
+// ── Animation loop ───────────────────────────────────────────────────────────
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+// ── UI wiring ────────────────────────────────────────────────────────────────
+function syncLabel(id) {
+  const el = document.getElementById(id);
+  document.getElementById(id + '-val').textContent = parseFloat(el.value).toFixed(
+    id === 'segments' ? 0 : 2
+  );
+}
+
+['roughness', 'heightScale', 'segments'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => syncLabel(id));
+});
+
+document.querySelectorAll('.scheme-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.scheme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+document.getElementById('regen').addEventListener('click', regenerate);
+
+// Initial render
+regenerate();
+</script>
+</body>
+</html>

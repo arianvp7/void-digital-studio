@@ -1,0 +1,15 @@
+{
+  "eval_id": 2,
+  "configuration": "with_skill",
+  "expectations": [
+    {"text": "HTML file includes Three.js CDN script tag", "passed": true, "evidence": "importmap with three@0.160.0/build/three.module.js from jsdelivr found"},
+    {"text": "Scene uses PlaneGeometry or similar for terrain mesh", "passed": true, "evidence": "new THREE.PlaneGeometry(size, size, resolution, resolution) called"},
+    {"text": "Vertices are displaced to create terrain height variation", "passed": true, "evidence": "fbm() noise function used to displace Y positions of each vertex in a loop"},
+    {"text": "Page has a two-panel layout with 3D canvas on the left", "passed": true, "evidence": "#canvas-panel (flex:1) and #controls-panel (width:300px) side-by-side"},
+    {"text": "Right panel has a roughness control", "passed": true, "evidence": "input type='range' id='roughness' min=0.1 max=1.0 present"},
+    {"text": "Right panel has a height scale control", "passed": true, "evidence": "input type='range' id='height-scale' min=0.5 max=10 present"},
+    {"text": "Right panel has a color scheme selector with at least desert/arctic/forest", "passed": true, "evidence": "select#color-scheme with options: forest, desert, arctic, volcanic, alien"},
+    {"text": "Right panel has a Regenerate button", "passed": true, "evidence": "button id='regenerate-btn' with click handler calling reseed() then generate()"},
+    {"text": "Output HTML file is saved inside the assets/ directory", "passed": true, "evidence": "File exists at workspace/iteration-1/eval-2/with_skill/outputs/3d-terrain-generator.html"}
+  ]
+}

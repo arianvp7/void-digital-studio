@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FocusFlow — Stop Doom-Scrolling. Start Shipping.</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:#0d0d0d;color:#fff;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(13,13,13,0.88);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,0.06)}
+.logo{font-size:22px;font-weight:900;letter-spacing:-0.5px}.logo span{color:#06b6d4}
+nav ul{list-style:none;display:flex;gap:32px}
+nav a{color:#aaa;text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}nav a:hover{color:#fff}
+.nav-cta{background:#06b6d4;color:#000;border:none;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
+.nav-cta:hover{background:#0891a2}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 60px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(6,182,212,0.12) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#06b6d4;margin-bottom:20px}
+h1{font-size:clamp(44px,7vw,84px);font-weight:900;line-height:1.0;letter-spacing:-2px;margin-bottom:24px;max-width:850px}
+h1 em{color:#06b6d4;font-style:normal}
+.hero p{font-size:clamp(16px,2vw,20px);color:#777;max-width:500px;line-height:1.65;margin-bottom:40px}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:64px}
+.btn-primary{background:#06b6d4;color:#000;border:none;padding:16px 36px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-primary:hover{background:#0891a2;transform:translateY(-1px);box-shadow:0 8px 24px rgba(6,182,212,0.3)}
+.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.2);padding:16px 36px;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.5)}
+
+/* FOCUS SCENE */
+.focus-scene{width:100%;max-width:760px;height:300px;position:relative;margin:0 auto}
+.tab{position:absolute;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:10px 16px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;animation:tabblock var(--dur,1.8s) var(--delay,0s) ease-in-out infinite}
+@keyframes tabblock{0%,60%{opacity:1;transform:scale(1)}70%{opacity:0.4;transform:scale(0.95) translateY(-4px)}80%{opacity:0}85%{opacity:0;transform:scale(0.8)}100%{opacity:0;transform:scale(0.8) translateY(-8px)}}
+.block-x{color:#ef4444;font-weight:900;margin-left:auto}
+.timer-box{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(6,182,212,0.08);border:2px solid rgba(6,182,212,0.3);border-radius:20px;padding:28px 44px;text-align:center;box-shadow:0 0 60px rgba(6,182,212,0.15)}
+.timer-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#06b6d4;margin-bottom:8px}
+.timer-display{font-size:52px;font-weight:900;letter-spacing:-2px;color:#fff;font-variant-numeric:tabular-nums}
+.timer-sub{font-size:12px;color:#444;margin-top:6px}
+.progress-bar{width:180px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin:12px auto 0;overflow:hidden}
+.progress-fill{height:100%;background:#06b6d4;border-radius:2px;animation:progress 25s linear infinite}
+@keyframes progress{0%{width:0%}100%{width:100%}}
+
+/* STATS */
+.stats{background:rgba(255,255,255,0.03);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;justify-content:center;flex-wrap:wrap;padding:48px 24px}
+.stat{text-align:center;padding:0 52px;border-right:1px solid rgba(255,255,255,0.08)}.stat:last-child{border-right:none}
+.stat-num{font-size:40px;font-weight:900;color:#06b6d4;letter-spacing:-1px}
+.stat-label{font-size:13px;color:#555;margin-top:4px;font-weight:500}
+
+/* FEATURES */
+.services{padding:100px 24px;max-width:1100px;margin:0 auto}
+.section-label{text-align:center;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#06b6d4;margin-bottom:14px}
+.section-title{text-align:center;font-size:clamp(28px,4vw,44px);font-weight:900;letter-spacing:-1px;margin-bottom:64px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:32px;transition:border-color .2s,transform .2s}
+.card:hover{border-color:rgba(6,182,212,0.4);transform:translateY(-3px)}
+.card-icon{font-size:34px;margin-bottom:16px}.card h3{font-size:18px;font-weight:700;margin-bottom:10px}
+.card p{font-size:14px;color:#666;line-height:1.65}
+.cta-section{text-align:center;padding:100px 24px;background:linear-gradient(180deg,transparent,rgba(6,182,212,0.06),transparent)}
+.cta-section h2{font-size:clamp(30px,5vw,52px);font-weight:900;letter-spacing:-1.5px;margin-bottom:16px}
+.cta-section p{font-size:18px;color:#666;margin-bottom:40px}
+.quote-form{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;max-width:480px;margin:0 auto}
+.quote-form input{flex:1;min-width:200px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:14px 18px;border-radius:10px;font-size:15px;outline:none;transition:border-color .2s}
+.quote-form input:focus{border-color:#06b6d4}.quote-form input::placeholder{color:#555}
+footer{text-align:center;padding:32px 24px;border-top:1px solid rgba(255,255,255,0.06);font-size:13px;color:#444}
+@media(max-width:600px){nav ul{display:none}nav{padding:16px 24px}.stat{padding:16px 24px;border-right:none;border-bottom:1px solid rgba(255,255,255,0.08)}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">Focus<span>Flow</span></div>
+  <ul><li><a href="#">Features</a></li><li><a href="#">Pricing</a></li><li><a href="#">Reviews</a></li><li><a href="#">Blog</a></li></ul>
+  <button class="nav-cta">Start Free Trial</button>
+</nav>
+
+<section class="hero">
+  <div class="eyebrow">For Remote Workers Who Actually Want to Ship</div>
+  <h1>Stop Doom-Scrolling.<br><em>Start Shipping.</em></h1>
+  <p>FocusFlow blocks the sites eating your day and shows you exactly how much deep work you're doing. Most users reclaim 2+ hours daily in week one.</p>
+  <div class="hero-btns">
+    <button class="btn-primary">Start My Free Trial</button>
+    <button class="btn-ghost">See How It Works</button>
+  </div>
+
+  <div class="focus-scene">
+    <!-- Blocked tabs fading out -->
+    <div class="tab" style="left:5%;top:15%;--dur:3.2s;--delay:0s">📱 Twitter <span class="block-x">✕</span></div>
+    <div class="tab" style="left:3%;top:48%;--dur:2.8s;--delay:1.1s">📺 YouTube <span class="block-x">✕</span></div>
+    <div class="tab" style="left:6%;top:72%;--dur:3.5s;--delay:0.5s">🎵 Spotify <span class="block-x">✕</span></div>
+    <div class="tab" style="right:5%;top:15%;--dur:2.9s;--delay:0.7s">📰 Reddit <span class="block-x">✕</span></div>
+    <div class="tab" style="right:3%;top:48%;--dur:3.3s;--delay:1.5s">📘 Facebook <span class="block-x">✕</span></div>
+    <div class="tab" style="right:6%;top:72%;--dur:2.7s;--delay:0.3s">📸 Instagram <span class="block-x">✕</span></div>
+    <!-- Focus timer -->
+    <div class="timer-box">
+      <div class="timer-label">Deep Focus</div>
+      <div class="timer-display" id="timer">25:00</div>
+      <div class="timer-sub">Pomodoro session active</div>
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stat"><div class="stat-num">2.4hrs</div><div class="stat-label">Reclaimed per day, avg user</div></div>
+  <div class="stat"><div class="stat-num">47,000</div><div class="stat-label">Remote workers trust FocusFlow</div></div>
+  <div class="stat"><div class="stat-num">94%</div><div class="stat-label">Still using it after 30 days</div></div>
+  <div class="stat"><div class="stat-num">7min</div><div class="stat-label">Setup time</div></div>
+</div>
+
+<section class="services">
+  <div class="section-label">Features</div>
+  <h2 class="section-title">Built for the chronically distracted.</h2>
+  <div class="cards">
+    <div class="card"><div class="card-icon">🚫</div><h3>Smart Site Blocking</h3><p>Block any site with one click. Set schedules — block Twitter during work hours, unblock after 6pm. You make the rules.</p></div>
+    <div class="card"><div class="card-icon">⏱️</div><h3>Pomodoro Focus Timer</h3><p>25-minute focus sprints with 5-minute breaks. The timer stays visible so you always know how much runway you have.</p></div>
+    <div class="card"><div class="card-icon">📊</div><h3>Weekly Focus Report</h3><p>See exactly where your hours went — focused work vs. distracted browsing — with a weekly email you'll actually want to read.</p></div>
+    <div class="card"><div class="card-icon">🔒</div><h3>Lockdown Mode</h3><p>Can't stop overriding your own blocks? Lockdown mode locks all settings for a set period. No escape hatch.</p></div>
+    <div class="card"><div class="card-icon">🎯</div><h3>Daily Goal Setting</h3><p>Set a deep work target each morning. FocusFlow tracks progress and nudges you when you're falling behind.</p></div>
+    <div class="card"><div class="card-icon">🔗</div><h3>Notion & Linear Sync</h3><p>Connects to your task manager so your focus sessions automatically log against the task you're working on.</p></div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>Your best work is<br>one block away.</h2>
+  <p>Free 14-day trial. No credit card. Installs in 7 minutes.</p>
+  <div class="quote-form">
+    <input type="email" placeholder="your@email.com">
+    <button class="btn-primary">Start My Free Trial</button>
+  </div>
+</section>
+<footer>© 2026 FocusFlow · Made for remote workers, by remote workers · help@focusflow.app</footer>
+
+<script>
+let secs = 25*60;
+const el = document.getElementById('timer');
+setInterval(()=>{
+  secs = secs > 0 ? secs-1 : 25*60;
+  const m = String(Math.floor(secs/60)).padStart(2,'0');
+  const s = String(secs%60).padStart(2,'0');
+  el.textContent = m+':'+s;
+},1000);
+</script>
+</body>
+</html>

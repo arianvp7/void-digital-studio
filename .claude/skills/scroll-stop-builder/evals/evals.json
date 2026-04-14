@@ -1,0 +1,23 @@
+{
+  "skill_name": "scroll-stop-builder",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Build me a landing page for a dog grooming business called FreshPup. We come to your house, groom your dog in our mobile van, and leave. No salons, no cages, no stress for the dog. Target customers are busy dog owners in the suburbs.",
+      "expected_output": "A single HTML file in assets/ with: animated hero visual (mobile grooming van, dog-related animation), scroll-stopping headline, stats bar, service cards, final CTA section. Dark theme with a fitting accent color.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "Make a landing page for a productivity SaaS called FocusFlow. It blocks distracting websites and shows you a live focus timer. For remote workers who can't stop doom-scrolling during work hours.",
+      "expected_output": "A single HTML file in assets/ with: animated hero (browser/apps being blocked, focus timer animation), scroll-stopping headline about distraction/focus, stats, feature cards, CTA. Dark tech aesthetic with cyan or blue accent.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Create a landing page for a local bakery called The Morning Knead in Portland. Everything sourdough — bread, pastries, pizza dough. They sell online and deliver locally. Rustic but modern vibe.",
+      "expected_output": "A single HTML file in assets/ with: animated hero (rising bread/steam, flying pastries), warm amber/golden accent color, scroll-stopping headline, product cards, delivery CTA. Rustic-modern dark aesthetic.",
+      "files": []
+    }
+  ]
+}

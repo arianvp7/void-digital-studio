@@ -1,0 +1,15 @@
+{
+  "eval_id": 1,
+  "configuration": "with_skill",
+  "expectations": [
+    {"text": "HTML file includes Three.js CDN script tag", "passed": true, "evidence": "importmap with three@0.160.0/build/three.module.js from jsdelivr CDN found"},
+    {"text": "Scene uses Points or BufferGeometry to render particles", "passed": true, "evidence": "THREE.Points with BufferGeometry and BufferAttribute for positions used"},
+    {"text": "Page has a two-panel layout with 3D canvas on the left", "passed": true, "evidence": "#canvas-panel (flex:1) and #controls-panel (width:300px) side-by-side layout"},
+    {"text": "Right panel has a slider for particle count", "passed": true, "evidence": "input type='range' id='count' min=100 max=20000 present"},
+    {"text": "Right panel has a slider for particle speed", "passed": true, "evidence": "input type='range' id='speed' min=0.1 max=5 present"},
+    {"text": "Right panel has a slider for spread/radius", "passed": true, "evidence": "input type='range' id='spread' min=0.5 max=15 present"},
+    {"text": "Right panel has a color picker input", "passed": true, "evidence": "input type='color' id='color-picker' plus 8 color swatches present"},
+    {"text": "Right panel has a Randomize button", "passed": true, "evidence": "button id='randomize-btn' with click handler that randomizes all params present"},
+    {"text": "Output HTML file is saved inside the assets/ directory", "passed": true, "evidence": "File exists at workspace/iteration-1/eval-1/with_skill/outputs/3d-particle-generator.html"}
+  ]
+}

@@ -1,0 +1,12 @@
+{"eval_id":2,"configuration":"with_skill","expectations":[
+  {"text":"Hero contains an animated bakery visual (rising bread, steam, flying pastries)","passed":true,"evidence":"SVG bread loaf with @keyframes breathe; steam elements with @keyframes rise; flying pastry emoji with @keyframes flyout; sparkles with @keyframes twinkle"},
+  {"text":"Page uses dark background","passed":true,"evidence":"body background:#0d0d0d"},
+  {"text":"Uses warm amber/golden accent color appropriate for food/bakery","passed":true,"evidence":"#f59e0b amber used for logo, buttons, stat numbers, eyebrow, borders"},
+  {"text":"Hero headline is 10 words or fewer","passed":true,"evidence":"'Real Bread. Real Crust. At Your Door.' = 7 words"},
+  {"text":"Headline is specific to sourdough, not generic","passed":true,"evidence":"Subheadline specifies sourdough, loaves, pastries, pizza dough; no generic 'best bakery' language"},
+  {"text":"Stats section with at least 3 numbers","passed":true,"evidence":"4 stats: 6am, 12+, 72hr, PDX"},
+  {"text":"Product grid with at least 4 cards","passed":true,"evidence":"6 product cards with emoji, Playfair Display h3, description"},
+  {"text":"Final CTA/delivery section with form and button","passed":true,"evidence":"cta-section with email input and 'Order This Morning's Bake' button"},
+  {"text":"Copy mentions Portland for local identity","passed":true,"evidence":"Eyebrow: 'Portland's Sourdough'; footer: 'Portland, OR'; CTA subtext: 'across Portland'"},
+  {"text":"Page contains CSS @keyframes animations","passed":true,"evidence":"@keyframes breathe, rise, flyout, twinkle all defined and applied"}
+]}

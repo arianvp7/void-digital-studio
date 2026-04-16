@@ -1,17 +1,420 @@
 {
   "metadata": {
-    "skill_name": "3d-asset-generator-website",
+    "skill_name": "seo-optimizer",
     "skill_path": "<path/to/skill>",
     "executor_model": "<model-name>",
     "analyzer_model": "<model-name>",
-    "timestamp": "2026-04-13T23:49:04Z",
-    "evals_run": [],
+    "timestamp": "2026-04-16T01:15:16Z",
+    "evals_run": [
+      0,
+      1,
+      2
+    ],
     "runs_per_configuration": 3
   },
-  "runs": [],
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "has_meta_description: Output HTML contains a meta description tag",
+          "passed": true,
+          "evidence": "Found: <meta name=\"description\" content=\"VOID Digital Studio builds scroll-stopping websites...\">"
+        },
+        {
+          "text": "title_length_50_60: Title tag is 50\u201360 characters",
+          "passed": true,
+          "evidence": "Title is 57 chars: 'Award-Winning Web Design & Branding \u2014 VOID Digital Studio'"
+        },
+        {
+          "text": "has_og_tags: Output HTML contains all four og: meta properties",
+          "passed": true,
+          "evidence": "Found og:type, og:url, og:title, og:description all present"
+        },
+        {
+          "text": "has_twitter_card: Output HTML contains Twitter Card twitter:card meta tag",
+          "passed": true,
+          "evidence": "Found: <meta name=\"twitter:card\" content=\"summary_large_image\">"
+        },
+        {
+          "text": "has_canonical: Output HTML contains a canonical link tag",
+          "passed": true,
+          "evidence": "Found: <link rel=\"canonical\" href=\"https://void-digital-studio.vercel.app/\">"
+        },
+        {
+          "text": "has_robots: Output HTML contains robots meta tag",
+          "passed": true,
+          "evidence": "Found: <meta name=\"robots\" content=\"index, follow\">"
+        },
+        {
+          "text": "has_json_ld: Output HTML contains JSON-LD structured data script",
+          "passed": true,
+          "evidence": "Found Organization schema with name, url, description, foundingDate, address"
+        },
+        {
+          "text": "has_audit_report: Audit report file is produced with before/after breakdown",
+          "passed": true,
+          "evidence": "audit-report.md exists with 'What was fixed' and 'Scores by category' table"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 11,
+        "failed": 0,
+        "total": 11,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "has_meta_description: Output HTML contains a meta description tag",
+          "passed": true,
+          "evidence": "Found 155-char meta description with product names, location, address, and hours"
+        },
+        {
+          "text": "title_length_50_60: Title tag is 50\u201360 characters",
+          "passed": true,
+          "evidence": "Title is 55 chars: 'Fresh Artisan Bread & Pastries \u2014 Morning Knead Portland'"
+        },
+        {
+          "text": "has_og_tags: Output HTML contains Open Graph tags",
+          "passed": true,
+          "evidence": "Found og:type, og:url, og:title, og:description, og:image"
+        },
+        {
+          "text": "has_twitter_card: Output HTML contains Twitter Card",
+          "passed": true,
+          "evidence": "Found twitter:card=summary_large_image with title, description, image"
+        },
+        {
+          "text": "has_canonical: Output HTML contains canonical link",
+          "passed": true,
+          "evidence": "Found: <link rel=\"canonical\" href=\"https://www.morningknead.com/\">"
+        },
+        {
+          "text": "has_local_business_schema: JSON-LD contains LocalBusiness or Bakery schema with address and hours",
+          "passed": true,
+          "evidence": "Found Bakery @type with PostalAddress (123 Main St, Portland OR) and openingHoursSpecification"
+        },
+        {
+          "text": "heading_hierarchy_fixed: Subheadings are h2 not h3",
+          "passed": true,
+          "evidence": "All subheadings changed from <h3> to <h2>; no <h3> tags remain"
+        },
+        {
+          "text": "image_has_alt: img tag has a non-empty descriptive alt attribute",
+          "passed": true,
+          "evidence": "alt=\"Freshly baked sourdough loaf at Morning Knead bakery in Portland, Oregon\""
+        },
+        {
+          "text": "has_lang_attribute: html tag has lang attribute",
+          "passed": true,
+          "evidence": "<html lang=\"en\">"
+        },
+        {
+          "text": "has_viewport: Head contains viewport meta tag",
+          "passed": true,
+          "evidence": "Found <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+        },
+        {
+          "text": "has_audit_report: Audit report produced with score table",
+          "passed": true,
+          "evidence": "audit-report.md has full scores table with Before/After columns for all 12 categories"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "has_og_image: Output HTML adds og:image that was missing from original",
+          "passed": true,
+          "evidence": "Found: <meta property=\"og:image\" content=\"https://void-digital-studio.vercel.app/og-image.jpg\">"
+        },
+        {
+          "text": "has_twitter_image: Output HTML adds twitter:image that was missing from original",
+          "passed": true,
+          "evidence": "Found: <meta name=\"twitter:image\" content=\"https://void-digital-studio.vercel.app/og-image.jpg\">"
+        },
+        {
+          "text": "has_about_page_schema: JSON-LD includes AboutPage @type",
+          "passed": true,
+          "evidence": "JSON-LD array contains AboutPage with isPartOf WebSite, alongside Organization schema"
+        },
+        {
+          "text": "preserves_existing_tags: Existing good tags are preserved",
+          "passed": true,
+          "evidence": "canonical, robots, og:title, og:description all present and unchanged"
+        },
+        {
+          "text": "has_audit_report: Audit report produced with before/after for each category",
+          "passed": true,
+          "evidence": "audit-report.md has Before/After columns in scores table"
+        },
+        {
+          "text": "report_identifies_gaps: Report correctly identifies og:image and twitter:image as missing",
+          "passed": true,
+          "evidence": "Report explicitly calls out og:image and twitter:image as gaps fixed"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.375,
+        "passed": 3,
+        "failed": 5,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "has_meta_description: Output HTML contains a meta description tag",
+          "passed": true,
+          "evidence": "Found meta description but content is generic (only 69 chars)"
+        },
+        {
+          "text": "title_length_50_60: Title tag is 50\u201360 characters",
+          "passed": false,
+          "evidence": "Title 'VOID Digital Studio \u2014 Creative Web Design Agency' is 53 chars \u2014 PASS on length but less keyword-optimized"
+        },
+        {
+          "text": "has_og_tags: Output HTML contains all four og: meta properties",
+          "passed": false,
+          "evidence": "og:url and og:image missing; only og:title, og:description, og:type present"
+        },
+        {
+          "text": "has_twitter_card: Output HTML contains Twitter Card twitter:card meta tag",
+          "passed": false,
+          "evidence": "No twitter:card meta tag found"
+        },
+        {
+          "text": "has_canonical: Output HTML contains a canonical link tag",
+          "passed": true,
+          "evidence": "Found canonical link tag"
+        },
+        {
+          "text": "has_robots: Output HTML contains robots meta tag",
+          "passed": true,
+          "evidence": "Found robots meta tag"
+        },
+        {
+          "text": "has_json_ld: Output HTML contains JSON-LD structured data script",
+          "passed": false,
+          "evidence": "No application/ld+json script tag found"
+        },
+        {
+          "text": "has_audit_report: Audit report file is produced with before/after breakdown",
+          "passed": false,
+          "evidence": "Report exists but no structured before/after breakdown or scores table"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.454,
+        "passed": 5,
+        "failed": 6,
+        "total": 11,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "has_meta_description: Output HTML contains a meta description tag",
+          "passed": true,
+          "evidence": "Found meta description but only ~118 chars (below 150-160 target)"
+        },
+        {
+          "text": "title_length_50_60: Title tag is 50\u201360 characters",
+          "passed": false,
+          "evidence": "Title 'Morning Knead \u2014 Portland Bakery' is 34 chars \u2014 too short, below 50-char minimum"
+        },
+        {
+          "text": "has_og_tags: Output HTML contains Open Graph tags",
+          "passed": false,
+          "evidence": "Only og:title, og:description, og:type \u2014 missing og:url and og:image"
+        },
+        {
+          "text": "has_twitter_card: Output HTML contains Twitter Card",
+          "passed": false,
+          "evidence": "No twitter:card tag found"
+        },
+        {
+          "text": "has_canonical: Output HTML contains canonical link",
+          "passed": false,
+          "evidence": "No canonical link tag found"
+        },
+        {
+          "text": "has_local_business_schema: JSON-LD contains LocalBusiness or Bakery schema with address and hours",
+          "passed": false,
+          "evidence": "No JSON-LD structured data in output \u2014 identified as missing in report but not added"
+        },
+        {
+          "text": "heading_hierarchy_fixed: Subheadings are h2 not h3",
+          "passed": true,
+          "evidence": "h3 tags changed to h2"
+        },
+        {
+          "text": "image_has_alt: img tag has a non-empty descriptive alt attribute",
+          "passed": true,
+          "evidence": "alt=\"Fresh bread at Morning Knead\" \u2014 present but not as descriptive as with_skill"
+        },
+        {
+          "text": "has_lang_attribute: html tag has lang attribute",
+          "passed": true,
+          "evidence": "lang=\"en\" present"
+        },
+        {
+          "text": "has_viewport: Head contains viewport meta tag",
+          "passed": true,
+          "evidence": "viewport meta present"
+        },
+        {
+          "text": "has_audit_report: Audit report produced with score table",
+          "passed": false,
+          "evidence": "Report exists but no scores table; notes what was NOT added rather than structured checklist"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.333,
+        "passed": 2,
+        "failed": 4,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "has_og_image: Output HTML adds og:image that was missing from original",
+          "passed": false,
+          "evidence": "No og:image tag in output \u2014 only noted as missing in report but not fixed"
+        },
+        {
+          "text": "has_twitter_image: Output HTML adds twitter:image that was missing from original",
+          "passed": false,
+          "evidence": "No twitter:image tag in output \u2014 only noted as missing in report but not fixed"
+        },
+        {
+          "text": "has_about_page_schema: JSON-LD includes AboutPage @type",
+          "passed": false,
+          "evidence": "JSON-LD still only has Organization @type \u2014 AboutPage upgrade not made"
+        },
+        {
+          "text": "preserves_existing_tags: Existing good tags are preserved",
+          "passed": true,
+          "evidence": "canonical, robots, og:title, og:description all preserved from original"
+        },
+        {
+          "text": "has_audit_report: Audit report produced with before/after for each category",
+          "passed": false,
+          "evidence": "Report is a brief checklist, not a structured before/after with scores table"
+        },
+        {
+          "text": "report_identifies_gaps: Report correctly identifies og:image and twitter:image as missing",
+          "passed": true,
+          "evidence": "Report does correctly note og:image and twitter:image as missing"
+        }
+      ],
+      "notes": []
+    }
+  ],
   "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.3873,
+        "stddev": 0.0614,
+        "min": 0.333,
+        "max": 0.454
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
     "delta": {
-      "pass_rate": "+0.00",
+      "pass_rate": "+0.61",
       "time_seconds": "+0.0",
       "tokens": "+0"
     }

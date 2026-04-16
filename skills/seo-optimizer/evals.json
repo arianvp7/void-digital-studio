@@ -1,0 +1,23 @@
+{
+  "skill_name": "seo-optimizer",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Can you audit and optimize the SEO on my VOID Digital Studio homepage? The file is at /Users/arianvp/Downloads/void-digital-studio/index.html — fix everything and give me a report.",
+      "expected_output": "Optimized index.html with full SEO meta tags, Open Graph, Twitter card, canonical, robots, JSON-LD structured data, and a written audit report listing what was fixed and scored.",
+      "files": ["/Users/arianvp/Downloads/void-digital-studio/index.html"]
+    },
+    {
+      "id": 1,
+      "prompt": "I just built a landing page for a coffee shop called Morning Knead and I need you to optimize it for SEO. Here's the HTML:\n\n<!DOCTYPE html><html><head><title>Morning Knead</title></head><body><h1>Welcome to Morning Knead</h1><h3>Fresh bread every morning</h3><img src=\"bread.jpg\"><p>We bake fresh sourdough, croissants, and pastries daily in Portland, Oregon. Visit us at 123 Main St.</p><h3>Our Menu</h3><p>Sourdough loaf - $8. Croissant - $4. Pain au chocolat - $5.</p><h3>Hours</h3><p>Mon-Fri 6am-2pm, Sat-Sun 7am-3pm</p></body></html>\n\nMake it rank on Google.",
+      "expected_output": "Optimized HTML with proper title (50-60 chars), meta description (150-160 chars), OG tags, Twitter card, canonical, robots, LocalBusiness JSON-LD structured data with address/hours, fixed heading hierarchy (h1 then h2s not h3s), image alt text added, and a full audit report.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Hey can you check the SEO on my about page and fix it up? It's at /Users/arianvp/Downloads/void-digital-studio/about.html",
+      "expected_output": "Optimized about.html with improved/verified title tag, meta description, OG tags, Twitter card, canonical URL, robots meta, AboutPage JSON-LD schema, heading audit, and a written report showing before/after for each item.",
+      "files": ["/Users/arianvp/Downloads/void-digital-studio/about.html"]
+    }
+  ]
+}

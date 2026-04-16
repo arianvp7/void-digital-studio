@@ -1,22 +1,23 @@
 # VOID Digital Studio — Scroll-Stopping Web Experiences
 
-> A fully animated, single-file landing page system built for high-impact digital presence. Immersive hero animations, particle physics, scroll-reveal storytelling, and cinematic motion — orchestrated through pure HTML, CSS, and vanilla JavaScript. No frameworks. No build step. Just fire.
+> A fully animated, multi-page website system built for high-impact digital presence. Immersive hero animations, particle physics, scroll-reveal storytelling, cinematic motion — plus a complete Claude Code skill stack for building, optimising, and deploying premium client websites at scale. No frameworks. No build step. Just fire.
 
 ---
 
 ## Overview
 
-This repository is the complete frontend for **VOID Digital Studio** — a creative agency specialising in scroll-stopping web experiences for brands that refuse to be ignored. Rather than relying on bloated frameworks or template builders, every animation in this codebase is hand-authored with precision.
+This repository is the complete frontend and skill system for **VOID Digital Studio** — a creative agency specialising in scroll-stopping web experiences for brands that refuse to be ignored. Built entirely through **Claude Code** with custom skills, this project also serves as a live demonstration of the full AI-assisted website workflow: brand → assets → build → SEO → deploy.
 
 The site demonstrates:
 - Custom particle canvas systems with mouse-repulsion physics
 - Scroll-triggered IntersectionObserver reveal sequences
 - Animated stat counters with cubic ease timing
 - Seamless infinite marquee loops
-- Frosted-glass navigation with dynamic dark/light mode switching
+- Frosted-glass navigation with dynamic dark/light switching
 - CTA breathing glow rings and button shimmer ripple effects
+- Multi-page architecture: Home, Work, About, Contact — all SEO-optimised
 
-Everything is self-contained in a single `index.html` — no dependencies, no node_modules, no build pipeline. Clone it, open it, ship it.
+Everything is self-contained in plain HTML — no dependencies, no node_modules, no build pipeline. Clone it, open it, ship it.
 
 ---
 
@@ -24,38 +25,59 @@ Everything is self-contained in a single `index.html` — no dependencies, no no
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        index.html                                │
-│                  (Everything lives here)                         │
-└──────────┬─────────────────────────┬───────────────────────────┘
-           │                         │
-  ┌────────▼────────┐      ┌─────────▼────────┐
-  │   Canvas Layer  │      │   CSS Layer       │
-  │                 │      │                   │
-  │  • 180 particles│      │  • @keyframes     │
-  │  • Velocity     │      │  • Custom props   │
-  │  • Mouse repel  │      │  • Scroll-reveal  │
-  │  • rAF loop     │      │  • Frosted glass  │
-  └────────┬────────┘      └─────────┬────────┘
-           │                         │
-  ┌────────▼─────────────────────────▼────────┐
-  │              JavaScript Layer              │
-  │                                            │
-  │  IntersectionObserver  │  Stat counters    │
-  │  Nav dark/light detect │  Marquee engine   │
-  │  Custom cursor         │  Parallax hero    │
-  └────────────────────────────────────────────┘
+│                    VOID Digital Studio                           │
+│              Multi-Page Website + Skill System                   │
+└────────────┬────────────────────────────┬────────────────────────┘
+             │                            │
+  ┌──────────▼──────────┐     ┌──────────▼──────────┐
+  │    Website Layer     │     │    Skills Layer       │
+  │                      │     │                       │
+  │  index.html          │     │  /asset-generation    │
+  │  work.html           │     │  /scroll-stop-builder │
+  │  about.html          │     │  /scroll-stop-prompter│
+  │  contact.html        │     │  /seo-optimizer       │
+  └──────────┬──────────┘     └──────────┬──────────┘
+             │                            │
+  ┌──────────▼──────────┐     ┌──────────▼──────────┐
+  │    Canvas Layer      │     │    Eval System        │
+  │                      │     │                       │
+  │  • 180 particles     │     │  evals.json (3 cases) │
+  │  • Velocity physics  │     │  benchmark.json       │
+  │  • Mouse repulsion   │     │  100% vs 38.7% delta  │
+  │  • rAF loop          │     │  graded + reported    │
+  └──────────────────────┘     └──────────────────────┘
 ```
 
 ---
 
 ## What's Inside
 
+### Pages
+
+| Page | File | SEO Schema |
+|---|---|---|
+| **Home** | `index.html` | Organization + WebSite JSON-LD |
+| **Work** | `work.html` | CollectionPage JSON-LD |
+| **About** | `about.html` | AboutPage + Organization JSON-LD |
+| **Contact** | `contact.html` | ContactPage JSON-LD |
+
+Every page has: title (50–60 chars), meta description (150–160 chars), Open Graph, Twitter Card, canonical URL, robots, structured data.
+
+### Skills
+
+| Skill | What it does |
+|---|---|
+| **`/asset-generation`** | Takes brand data → outputs AI image + video prompts (Nano Banana / Flux / Kling) |
+| **`/scroll-stop-builder`** | Builds full animated HTML site from brief + scroll animation video |
+| **`/scroll-stop-prompter`** | Writes scroll-stopping copy: headlines, hero text, CTAs |
+| **`/seo-optimizer`** | Audits + fixes SEO across all pages, outputs HTML report with A–F grade |
+
 ### Animations Shipped
 
 | Component | Technique | Details |
 |---|---|---|
 | **Hero Particle Field** | Canvas + rAF | 180 particles, mouse repulsion, scroll-offset compensation |
-| **Stat Counters** | requestAnimationFrame | Cubic ease, counts to 47+, 120+, 98%, $2.4M live |
+| **Stat Counters** | requestAnimationFrame | Cubic ease, live counters |
 | **Scroll Reveal** | IntersectionObserver | 0.12 threshold, staggered nth-child delays |
 | **Marquee Ticker** | CSS translateX | Doubled content, seamless infinite loop |
 | **Custom Cursor** | JS mousemove | Purple/cyan gradient, scale-on-hover |
@@ -67,24 +89,43 @@ Everything is self-contained in a single `index.html` — no dependencies, no no
 
 | Token | Value | Used For |
 |---|---|---|
-| `--void-purple` | `#7c3aed` | Primary brand, cursor, accents |
-| `--void-cyan` | `#06b6d4` | Secondary, particle glow, highlights |
-| `--void-dark` | `#0d0d0d` | Background, dark sections |
-| `--void-card` | `#111111` | Card backgrounds |
-| `--void-border` | `rgba(255,255,255,0.06)` | Subtle card borders |
+| `--accent` | `#a855f7` | Primary brand, cursor, accents |
+| `--accent2` | `#06b6d4` | Secondary, gradients, highlights |
+| `--bg` | `#050508` | Background |
+| Inter 300–900 | Google Fonts | All typography |
 
-### Page Sections
+---
 
-| Section | Content |
-|---|---|
-| **Nav** | Frosted glass, VOID logo, dark/light adaptive |
-| **Hero** | Full-viewport, particle canvas, animated headline, CTA |
-| **Stats** | 4 animated counters — projects, clients, satisfaction, revenue |
-| **Work Grid** | 6 project cards with scroll-reveal and hover lift |
-| **Services** | 6 service cards — Web Design, Motion, Branding, etc. |
-| **Marquee** | Infinite scrolling tagline ticker |
-| **CTA** | Email capture, breathing glow, full-width dark section |
-| **Footer** | Links, social, copyright |
+## The Workflow (WORKFLOW.md)
+
+This repo includes the complete **[Jack Roberts $10K Website Workflow](WORKFLOW.md)** — a 5-step system for building and selling premium websites with Claude Code:
+
+```
+Step 1 → firecrawl.dev       Brand extraction from any client website
+Step 2 → /asset-generation   AI image + video prompts → Nano Banana / Kling
+Step 3 → /scroll-stop-builder  Build the animated site
+Step 4 → Multi-page prompt   Add pages, full SEO, HTML audit report
+Step 5 → GitHub + Vercel     Deploy in one command
+```
+
+See [WORKFLOW.md](WORKFLOW.md) for all prompts, settings, and the MONEY framework for selling sites.
+
+---
+
+## SEO Benchmark Results
+
+The `/seo-optimizer` skill was validated against 3 test cases:
+
+| Eval | Test | With Skill | Without Skill |
+|---|---|---|---|
+| eval-0 | VOID homepage (bare) | 8/8 ✅ | 3/8 ❌ |
+| eval-1 | Morning Knead coffee shop (inline HTML) | 11/11 ✅ | 5/11 ❌ |
+| eval-2 | VOID about page (gaps only) | 6/6 ✅ | 2/6 ❌ |
+| **Total** | | **100% pass rate** | **38.7% pass rate** |
+
+**Delta: +61.3pp** — the skill makes a measurable, consistent difference across all three scenarios.
+
+Full benchmark data in [`workspace/iteration-1/benchmark.json`](workspace/iteration-1/benchmark.json).
 
 ---
 
@@ -98,17 +139,49 @@ git clone https://github.com/arianvp7/void-digital-studio.git
 open index.html
 ```
 
-No install. No build. No config. One file, full experience.
+No install. No build. No config.
 
 ---
 
 ## Deployment
 
-The site is deployed to Vercel as a static site with zero configuration.
-
 **Live URL:** [void-digital-studio.vercel.app](https://void-digital-studio.vercel.app)
 
-Every push to `main` triggers an automatic redeploy.
+Every push to `main` triggers an automatic Vercel redeploy. Vercel Analytics is enabled — visitor data visible in the Vercel dashboard.
+
+---
+
+## File Structure
+
+```
+void-digital-studio/
+├── index.html              # Home — particle canvas, scroll animations
+├── work.html               # Work — portfolio grid, filter bar, stats
+├── about.html              # About — studio story, team, values, process
+├── contact.html            # Contact — split layout, form, FAQ
+│
+├── WORKFLOW.md             # Complete 5-step $10K website workflow
+│
+├── skills/
+│   ├── asset-generation/
+│   │   └── SKILL.md        # AI image + video prompt generator
+│   └── seo-optimizer/
+│       ├── SKILL.md        # SEO audit + HTML report skill
+│       └── evals.json      # 3 test cases used for validation
+│
+├── assets/
+│   ├── scroll-animated-site.html   # Original scroll-stop template
+│   ├── moving-company.html         # Moving company demo
+│   └── apple-animated.html         # Apple-style demo
+│
+├── workspace/
+│   └── iteration-1/
+│       ├── benchmark.json  # Skill eval results (100% vs 38.7%)
+│       └── benchmark.md    # Benchmark summary
+│
+└── evals/
+    └── evals.json          # Legacy eval prompts
+```
 
 ---
 
@@ -120,24 +193,17 @@ Every push to `main` triggers an automatic redeploy.
 | Styling | CSS3, custom properties, @keyframes |
 | Animation | Vanilla JS, Canvas API, requestAnimationFrame |
 | Scroll detection | IntersectionObserver API |
-| Deployment | Vercel (static) |
+| AI workflow | Claude Code + custom skills |
+| Deployment | Vercel (static, auto-deploy) |
+| Analytics | Vercel Web Analytics |
 | Version control | GitHub |
 | Dependencies | **Zero** |
 
 ---
 
-## File Structure
-
-```
-void-digital-studio/
-└── index.html          # The entire site — HTML, CSS, JS, all inline
-```
-
----
-
 ## Built With Claude Code
 
-This site was designed, animated, and deployed using **Claude Code** — Anthropic's AI coding assistant. The entire workflow — from copy to canvas physics to GitHub push to Vercel deploy — was executed through a single AI-assisted session.
+This entire project — site design, animation system, multi-page architecture, SEO optimisation, skill creation, eval framework, and deployment pipeline — was built using **Claude Code** through a single AI-assisted session.
 
 ---
 
